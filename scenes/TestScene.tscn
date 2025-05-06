@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://derq88mb4177c"]
+
+[ext_resource type="PackedScene" uid="uid://bnwhh32vo3hhw" path="res://player/PlayerController.tscn" id="1_2gju5"]
+[ext_resource type="PackedScene" uid="uid://btulpg6d7kkml" path="res://assets/crystals/Crystal/crystal_2.fbx" id="2_rlkm5"]
+
+[node name="TestArea" type="Node3D"]
+
+[node name="PlayerController" parent="." instance=ExtResource("1_2gju5")]
+
+[node name="crystal_2" parent="." instance=ExtResource("2_rlkm5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.11989, 0, 0.115415)
