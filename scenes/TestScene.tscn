@@ -8,4 +8,4 @@
 [node name="PlayerController" parent="." instance=ExtResource("1_2gju5")]
 
 [node name="crystal_2" parent="." instance=ExtResource("2_rlkm5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.11989, 0, 0.115415)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.04759, 0, -6.00092)
