@@ -1,11 +1,47 @@
-[gd_scene load_steps=3 format=3 uid="uid://derq88mb4177c"]
+[gd_scene load_steps=10 format=3 uid="uid://derq88mb4177c"]
 
 [ext_resource type="PackedScene" uid="uid://bnwhh32vo3hhw" path="res://player/PlayerController.tscn" id="1_2gju5"]
-[ext_resource type="PackedScene" uid="uid://btulpg6d7kkml" path="res://assets/crystals/Crystal/crystal_2.fbx" id="2_rlkm5"]
+[ext_resource type="PackedScene" uid="uid://bbvm6te86h0ea" path="res://assets/crystals/CrystalSpikesA.tscn" id="2_rlkm5"]
+[ext_resource type="PackedScene" uid="uid://we434cavm63w" path="res://assets/crystals/CrystalSpikesC.tscn" id="6_fws1a"]
+[ext_resource type="PackedScene" uid="uid://csbpacej3v1gy" path="res://assets/crystals/CrystalStoneA.tscn" id="7_epq12"]
+[ext_resource type="PackedScene" uid="uid://dexvtqxtkibx8" path="res://assets/crystals/CrystalStoneB.tscn" id="7_u6bnu"]
+[ext_resource type="PackedScene" uid="uid://c8sm0f2r7tmeo" path="res://assets/crystals/CrystalTowerA.tscn" id="7_xpysu"]
+[ext_resource type="PackedScene" uid="uid://bnb6ecb224r37" path="res://assets/crystals/prefabs/Crystal-9MyZG1W4lZ/crystal_14.fbx" id="7_yhikq"]
+[ext_resource type="PackedScene" uid="uid://d2t0mm6ew1ik" path="res://assets/crystals/CrystalTowerB.tscn" id="8_epq12"]
+
+[sub_resource type="Environment" id="Environment_rlkm5"]
+background_mode = 1
+background_color = Color(0.0923971, 0.0923971, 0.0923971, 1)
+ssr_enabled = true
+glow_enabled = true
 
 [node name="TestArea" type="Node3D"]
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_rlkm5")
+
 [node name="PlayerController" parent="." instance=ExtResource("1_2gju5")]
 
-[node name="crystal_2" parent="." instance=ExtResource("2_rlkm5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.04759, 0, -6.00092)
+[node name="CrystalSpikes" parent="." instance=ExtResource("2_rlkm5")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.78353, 0, -5.75434)
+
+[node name="CrystalTower" parent="." instance=ExtResource("7_xpysu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.36917, 0, 8.14258)
+
+[node name="CrystalStone" parent="." instance=ExtResource("7_u6bnu")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -3.02409, 0, 1.22169)
+
+[node name="CrystalSpikes2" parent="." instance=ExtResource("2_rlkm5")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 4.12018, -9.53674e-07, 3.97672)
+
+[node name="CrystalStone2" parent="." instance=ExtResource("7_epq12")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -4.32048, 0, 3.96735)
+
+[node name="CrystalSpikes3" parent="." instance=ExtResource("6_fws1a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.66813, -0.0122375, -2.29368)
+
+[node name="crystal_14" parent="." instance=ExtResource("7_yhikq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.182, 0, 0.784)
+
+[node name="CrystalTower2" parent="." instance=ExtResource("8_epq12")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.73071, 0, 4.62397)
