@@ -7,7 +7,7 @@ load_path = "res://.godot/imported/crystal_2_0.png-5e4aed842acf841076888e2b3e6e6
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dp6f4"]
 resource_name = "Material.004"
-transparency = 1
+transparency = 4
 vertex_color_use_as_albedo = true
 albedo_color = Color(1, 1, 1, 0.784314)
 albedo_texture = SubResource("CompressedTexture2D_nehfu")
@@ -59,9 +59,11 @@ mesh = SubResource("ArrayMesh_id815")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." index="1"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 3.75803, 0)
-light_energy = 5.0
+light_energy = 2.0
+light_indirect_energy = 2.0
 light_size = 1.5
 shadow_enabled = true
+omni_range = 12.0
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
 

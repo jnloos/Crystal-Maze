@@ -12,8 +12,8 @@ var player: Node3D
 # Adjust camera interactions
 @export var sensitivity: float = 0.005
 @export var zoom_speed: float = 1.0
-@export var min_pitch: float = deg_to_rad(-30)
-@export var max_pitch: float = deg_to_rad(45)
+@export var min_pitch: float = deg_to_rad(0)
+@export var max_pitch: float = deg_to_rad(60)
 
 # current y-axis angle
 var yaw: float = 0.0

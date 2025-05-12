@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=4 uid="uid://d2t0mm6ew1ik"]
+[gd_scene load_steps=7 format=4 uid="uid://d2t0mm6ew1ik"]
 
 [ext_resource type="PackedScene" uid="uid://bnb6ecb224r37" path="res://assets/crystals/prefabs/Crystal-9MyZG1W4lZ/crystal_14.fbx" id="1_i20t1"]
 
@@ -10,7 +10,7 @@ resource_name = "Material.004"
 vertex_color_use_as_albedo = true
 albedo_texture = SubResource("CompressedTexture2D_dqkgb")
 metallic = 1.0
-roughness = 0.4
+roughness = 0.0
 emission = Color(0, 0.282353, 0.635294, 1)
 emission_energy_multiplier = 0.4
 
@@ -48,9 +48,21 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_yxwnk")
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_i20t1"]
+
 [node name="CrystalTower" instance=ExtResource("1_i20t1")]
 
-[node name="crystal_14" parent="." index="0"]
+[node name="ReflectionProbe" type="ReflectionProbe" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, -4.37114e-08, 0, 4.37114e-08, 1, 0.0263813, -0.0211968, 0.00790977)
+update_mode = 1
+size = Vector3(40, 20, 40)
+
+[node name="crystal_14" parent="." index="1"]
 mesh = SubResource("ArrayMesh_w0s1h")
 
-[node name="ReflectionProbe" type="ReflectionProbe" parent="." index="1"]
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.474579)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+shape = SubResource("CylinderShape3D_i20t1")
