@@ -54,7 +54,6 @@ shadow_mesh = SubResource("ArrayMesh_yxwnk")
 
 [node name="ReflectionProbe" type="ReflectionProbe" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, -4.37114e-08, 0, 4.37114e-08, 1, 0.0263813, -0.0211968, 0.00790977)
-update_mode = 1
 size = Vector3(40, 20, 40)
 
 [node name="crystal_14" parent="." index="1"]

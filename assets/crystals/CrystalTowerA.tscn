@@ -58,7 +58,6 @@ mesh = SubResource("ArrayMesh_1wx82")
 
 [node name="ReflectionProbe" type="ReflectionProbe" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.86265e-09, 0)
-update_mode = 1
 size = Vector3(40, 20, 40)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
