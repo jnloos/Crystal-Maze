@@ -64,3 +64,8 @@ look={
 "deadzone": 0.2,
 "events": []
 }
+
+[rendering]
+
+renderer/rendering_method.mobile="forward_plus"
+renderer/rendering_method.web="forward_plus"

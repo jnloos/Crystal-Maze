@@ -64,9 +64,8 @@ transform = Transform3D(5, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0)
 shape = SubResource("CylinderShape3D_wg4xq")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." index="2"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 3.75803, 0)
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, 0, 1.95596, 0)
 light_energy = 2.0
 light_indirect_energy = 2.0
-light_size = 1.5
 shadow_enabled = true
 omni_range = 12.0

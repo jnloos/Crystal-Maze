@@ -11,8 +11,8 @@ vertex_color_use_as_albedo = true
 albedo_texture = SubResource("CompressedTexture2D_235xj")
 metallic = 1.0
 roughness = 0.0
-emission = Color(0, 0.701961, 0.960784, 1)
-emission_energy_multiplier = 0.4
+emission = Color(0.188235, 0.74902, 1, 1)
+emission_energy_multiplier = 0.1
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ik4hb"]
 _surfaces = [{
@@ -58,7 +58,7 @@ mesh = SubResource("ArrayMesh_1wx82")
 
 [node name="ReflectionProbe" type="ReflectionProbe" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.86265e-09, 0)
-size = Vector3(40, 20, 40)
+blend_distance = 20.0
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
 

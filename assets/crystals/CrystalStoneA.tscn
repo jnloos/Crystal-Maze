@@ -56,6 +56,5 @@ transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 mesh = SubResource("ArrayMesh_cheea")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." index="1"]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0.238228, 0)
-light_size = 1.5
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0.480233, 0)
 shadow_enabled = true

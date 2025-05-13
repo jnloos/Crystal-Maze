@@ -6,6 +6,9 @@ extends CharacterBody3D
 
 @onready var anim_player: AnimationPlayer = $HeroAsset/AnimationPlayer
 
+func _ready() -> void:
+	add_to_group("player")
+
 func _physics_process(delta: float) -> void:
 	# Do not move, if the game is paused. 
 	if PauseStatus.is_paused():

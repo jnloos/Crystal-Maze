@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://1jkc4pi0qkqd"]
+[gd_scene load_steps=3 format=3 uid="uid://1jkc4pi0qkqd"]
 
 [ext_resource type="PackedScene" uid="uid://uxsnnsj7cxu2" path="res://assets/halloween/Post Lantern/post_lantern.fbx" id="1_wgmh5"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_wgmh5"]
 
 [node name="Lantern" instance=ExtResource("1_wgmh5")]
 transform = Transform3D(1.5, 0, 0, 0, 1.4, 0, 0, 0, 1, 0, 0, 0)
@@ -11,3 +13,9 @@ light_color = Color(1, 0.662745, 0.34902, 1)
 light_energy = 2.0
 shadow_enabled = true
 omni_range = 10.0
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
+transform = Transform3D(0.8, 0, 0, 0, 3, 0, 0, 0, 1.6, 0, 1.6, 0.6)
+shape = SubResource("CylinderShape3D_wgmh5")
