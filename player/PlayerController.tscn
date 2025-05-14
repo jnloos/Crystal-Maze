@@ -2,13 +2,13 @@
 
 [ext_resource type="Script" uid="uid://ckbxp10eeysq5" path="res://scripts/player/AttachCamera.gd" id="1_gmr85"]
 [ext_resource type="PackedScene" uid="uid://d0fw60ix2q5bx" path="res://player/CameraRig.tscn" id="1_gypi1"]
-[ext_resource type="PackedScene" uid="uid://c4ninoej20be1" path="res://interface/InterfaceContainer.tscn" id="2_bct12"]
 [ext_resource type="PackedScene" uid="uid://3re8h8wflilo" path="res://player/PlayerBody.tscn" id="2_gmr85"]
+[ext_resource type="PackedScene" uid="uid://bycdkv8vutgnp" path="res://interface/PauseFeedback.tscn" id="4_bct12"]
 
 [node name="PlayerController" type="Node3D"]
 script = ExtResource("1_gmr85")
 
-[node name="InterfaceContainer" parent="." instance=ExtResource("2_bct12")]
+[node name="PauseFeedback" parent="." instance=ExtResource("4_bct12")]
 
 [node name="CameraRig" parent="." instance=ExtResource("1_gypi1")]
 transform = Transform3D(1, 0, 0, 0, 0.954745, 0.297425, 0, -0.297425, 0.954745, 0, 0, 0)

@@ -1,18 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bycdkv8vutgnp"]
+[gd_scene load_steps=3 format=3 uid="uid://bs6of4mxdmga8"]
 
-[ext_resource type="Script" uid="uid://pmno8rromtiy" path="res://scripts/pause/PauseOverlay.gd" id="1_v65sg"]
+[ext_resource type="Script" uid="uid://pmno8rromtiy" path="res://scripts/pause/PauseOverlay.gd" id="1_3kphq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7i25e"]
 bg_color = Color(0.141176, 0.141176, 0.141176, 0.745098)
 
-[node name="PauseFeedback" type="Control"]
+[node name="PauseOverlay" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_v65sg")
+script = ExtResource("1_3kphq")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1

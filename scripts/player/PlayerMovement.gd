@@ -11,7 +11,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	# Do not move, if the game is paused. 
-	if PauseStatus.is_paused():
+	if PauseManager.is_paused():
 		velocity = Vector3.ZERO
 		move_and_slide()
 		if anim_player.current_animation != "Idle":

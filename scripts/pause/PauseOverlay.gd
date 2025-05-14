@@ -1,14 +1,17 @@
+# PauseOverlay.gd
 extends Control
 
+@onready var label := $Background/Label
+
 func _ready() -> void:
-	visible = false
-	
-	# Link visibility with the pause trigger
-	PauseStatus.connect("pause_toggled", Callable(self, "_on_pause_toggled"))
+	hide()
+	print("▶️ PauseOverlay ready and connected")
+	PauseManager.connect("pause_toggled", Callable(self, "_on_pause_toggled"))
 
 func _on_pause_toggled(paused: bool) -> void:
-	visible = paused
+	print("▶️ PauseOverlay got pause_toggled=", paused, " message=", PauseManager.get_message())
 	if paused:
-		grab_focus()
+		label.text = PauseManager.get_message()
+		show()
 	else:
-		release_focus()
+		hide()

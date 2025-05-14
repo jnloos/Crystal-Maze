@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+PauseManager="*res://scripts/pause/PauseManager.gd"
 PauseStatus="*res://scripts/pause/PauseStatus.gd"
 
 [input]

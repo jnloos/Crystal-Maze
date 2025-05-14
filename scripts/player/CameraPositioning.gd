@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Do not move when paused
-	if PauseStatus.is_paused():
+	if PauseManager.is_paused():
 		return
 	
 	# Update the current angles

@@ -1,17 +1,11 @@
+# PauseStatus.gd
+# (optional stub; Input wird jetzt zentral im PauseManager gehandhabt)
 extends Node
 
-signal pause_toggled(paused: bool)
-var paused: bool = false
+@export var pause_reason: String = "Game Paused"
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"):
-		paused = not paused
-		# Maus-Cursor umschalten
-		if paused:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		else:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		emit_signal("pause_toggled", paused)
+func pause() -> void:
+	PauseManager.enable_pause(pause_reason)
 
-func is_paused() -> bool:
-	return paused
+func resume() -> void:
+	PauseManager.disable_pause()

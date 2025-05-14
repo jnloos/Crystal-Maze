@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=4 uid="uid://c6voocfkvoo2q"]
 
 [ext_resource type="Texture2D" uid="uid://g5feikkm8133" path="res://assets/halloween/Fence/fence_0.png" id="1_lyqnu"]
-[ext_resource type="Script" uid="uid://cuobn5jovb65t" path="res://scripts/areas/OpenGate.gd" id="1_nu2b8"]
+[ext_resource type="Script" uid="uid://cuobn5jovb65t" path="res://scripts/effects/OpenGate.gd" id="1_nu2b8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44iq6"]
 resource_name = "HalloweenBits"
