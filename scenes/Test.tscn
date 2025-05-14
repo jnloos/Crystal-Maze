@@ -1,8 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://derq88mb4177c"]
+[gd_scene load_steps=21 format=3 uid="uid://derq88mb4177c"]
 
-[ext_resource type="PackedScene" uid="uid://bnwhh32vo3hhw" path="res://player/PlayerController.tscn" id="1_2gju5"]
 [ext_resource type="Texture2D" uid="uid://b2ekqci47bfje" path="res://assets/hdr/NightSkyHDRI004_8K-HDR.exr" id="1_cjal3"]
-[ext_resource type="PackedScene" uid="uid://c6s8qw6rsgsgs" path="res://assets/maze/paths/BasePath.tscn" id="2_rlkm5"]
 [ext_resource type="PackedScene" uid="uid://6vbccgu42gn1" path="res://assets/maze/paths/CrystalPathA.tscn" id="4_m5dm6"]
 [ext_resource type="PackedScene" uid="uid://c5rr88lnwjf81" path="res://assets/maze/walls/WallBanner.tscn" id="4_nb1wl"]
 [ext_resource type="PackedScene" uid="uid://cfrab4gmjmkeb" path="res://assets/maze/paths/CrystalPathB.tscn" id="5_m5dm6"]
@@ -16,20 +14,21 @@
 [ext_resource type="PackedScene" uid="uid://bhbivsfcv2mda" path="res://assets/maze/paths/StonePathA.tscn" id="13_5l70m"]
 [ext_resource type="PackedScene" uid="uid://de5yb7vghprmc" path="res://assets/maze/paths/StonePathB.tscn" id="14_v6sup"]
 [ext_resource type="PackedScene" uid="uid://p7m1tcf43su7" path="res://assets/maze/paths/GatePath.tscn" id="15_v6sup"]
+[ext_resource type="PackedScene" uid="uid://d2dn7w632vtg3" path="res://assets/maze/Start.tscn" id="17_i7hgn"]
 [ext_resource type="PackedScene" uid="uid://h330013map1l" path="res://assets/maze/paths/MirrorPath.tscn" id="17_o4svi"]
 [ext_resource type="PackedScene" uid="uid://denff7nr6uxgf" path="res://assets/maze/Target.tscn" id="18_i7hgn"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_o4svi"]
 panorama = ExtResource("1_cjal3")
 
-[sub_resource type="Sky" id="Sky_i7hgn"]
+[sub_resource type="Sky" id="Sky_k07xo"]
 sky_material = SubResource("PanoramaSkyMaterial_o4svi")
 
 [sub_resource type="Environment" id="Environment_rlkm5"]
 background_mode = 2
 background_color = Color(0.0923971, 0.0923971, 0.0923971, 1)
 background_energy_multiplier = 0.25
-sky = SubResource("Sky_i7hgn")
+sky = SubResource("Sky_k07xo")
 ssr_enabled = true
 glow_enabled = true
 
@@ -37,10 +36,6 @@ glow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rlkm5")
-
-[node name="PlayerController" parent="." instance=ExtResource("1_2gju5")]
-
-[node name="Path" parent="." instance=ExtResource("2_rlkm5")]
 
 [node name="Wall" parent="." instance=ExtResource("4_nb1wl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, 0)
@@ -140,3 +135,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30)
 
 [node name="Target" parent="." instance=ExtResource("18_i7hgn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, 46)
+
+[node name="Start" parent="." instance=ExtResource("17_i7hgn")]

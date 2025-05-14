@@ -5,4 +5,3 @@ extends Node3D
 
 func _ready():
 	camera_rig.follow_target(player)
-	print("Camera target set to:", player.name)

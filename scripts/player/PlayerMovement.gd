@@ -32,7 +32,7 @@ func _physics_process(delta: float) -> void:
 
 	# Speed can be switched.
 	var speed: float
-	if Input.is_action_pressed("walk"):
+	if Input.is_action_pressed("toggle_walk"):
 		speed = walk_speed
 	else:
 		speed = run_speed
@@ -43,7 +43,7 @@ func _physics_process(delta: float) -> void:
 	# Show animations
 	if input_vec.length() > 0.01:
 		var target_anim: String
-		if Input.is_action_pressed("walk"):
+		if Input.is_action_pressed("toggle_walk"):
 			target_anim = "Walk"
 		else:
 			target_anim = "Run"

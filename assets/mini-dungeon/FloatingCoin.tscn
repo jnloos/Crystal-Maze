@@ -7,7 +7,7 @@
 
 [node name="coin" instance=ExtResource("1_ae34p")]
 script = ExtResource("2_e5o2v")
-speed = 0.5
+speed = 0.25
 
 [node name="coin" parent="." index="0"]
 transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 4, 0, 1, 0)

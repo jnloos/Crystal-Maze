@@ -20,14 +20,12 @@ func enable_pause(msg: String) -> void:
 	_pause_message = msg
 	_pause_active = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	print("Pause enabled with message: %s" % _pause_message)
 	emit_signal("pause_toggled", true)
 
 func disable_pause() -> void:
 	print("Pause disabled")
 	_pause_active = false
 	_pause_message = ""
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	emit_signal("pause_toggled", false)
 
 func is_paused() -> bool:

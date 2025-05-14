@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Crystal Maze"
-run/main_scene="uid://3re8h8wflilo"
+run/main_scene="uid://b4devyfe1nu0u"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
