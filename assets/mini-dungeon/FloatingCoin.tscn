@@ -18,7 +18,7 @@ light_color = Color(1, 0.803922, 0, 1)
 light_energy = 10.0
 light_size = 2.0
 shadow_enabled = true
-omni_range = 500.0
+omni_range = 1000.0
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
 transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 4, 0, 1, 0)

@@ -4,7 +4,6 @@
 [ext_resource type="ArrayMesh" uid="uid://i3holwy01bij" path="res://assets/crystals/meshes/SpikeShadowA.tres" id="2_8cnff"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_nehfu"]
-load_path = "res://.godot/imported/crystal_2_0.png-5e4aed842acf841076888e2b3e6e6a4d.s3tc.ctex"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dp6f4"]
 resource_name = "Material.004"

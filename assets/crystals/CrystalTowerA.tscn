@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://bgquchaotka1n" path="res://assets/crystals/prefabs/Crystal/crystal_5.fbx" id="1_235xj"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_235xj"]
-load_path = "res://.godot/imported/crystal_5_0.png-7bd2d80504d13849d6ac50ea8f7377a0.s3tc.ctex"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jm14e"]
 resource_name = "Material.004"

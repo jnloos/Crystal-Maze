@@ -30,7 +30,6 @@ func _ready() -> void:
 	print("MazeGenerator finished.")
 
 func generate_maze() -> void:
-	print("→ generate_maze() start mit", map_file_path)
 	if not FileAccess.file_exists(map_file_path):
 		push_error("Map-File nicht gefunden: %s" % map_file_path)
 		return
@@ -80,7 +79,7 @@ func generate_maze() -> void:
 				instance.position = Vector3(col * tile_size.x, 0, row * tile_size.z)
 				add_child(instance)
 
-	print("→ generate_maze() fertig:", lines.size(), "Zeilen,", total_instances, "Instanzen")
+	print(lines.size(), "x" , lines[0].length(), " Felder, ", total_instances, " Instanzen")
 
 func _is_simple_cell(lines: Array[String], row: int, col: int) -> bool:
 	var dirs := [Vector2(0,-1), Vector2(0,1), Vector2(-1,0), Vector2(1,0)]
