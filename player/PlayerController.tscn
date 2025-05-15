@@ -10,6 +10,7 @@ script = ExtResource("1_gmr85")
 
 [node name="CameraRig" parent="." instance=ExtResource("1_gypi1")]
 transform = Transform3D(1, 0, 0, 0, 0.954745, 0.297425, 0, -0.297425, 0.954745, 0, 0, 0)
+max_distance = 200.0
 
 [node name="PlayerBody" parent="." instance=ExtResource("2_gmr85")]
 

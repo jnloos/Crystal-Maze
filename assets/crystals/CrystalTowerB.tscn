@@ -52,16 +52,12 @@ shadow_mesh = SubResource("ArrayMesh_yxwnk")
 
 [node name="CrystalTower" instance=ExtResource("1_i20t1")]
 
-[node name="ReflectionProbe" type="ReflectionProbe" parent="." index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, -4.37114e-08, 0, 4.37114e-08, 1, 0.0263813, -0.0211968, 0.00790977)
-blend_distance = 20.0
-
-[node name="crystal_14" parent="." index="1"]
+[node name="crystal_14" parent="." index="0"]
 mesh = SubResource("ArrayMesh_w0s1h")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." index="2"]
+[node name="StaticBody3D" type="StaticBody3D" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.474579)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" index="0"]
-transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 3, 0)
 shape = SubResource("CylinderShape3D_i20t1")
