@@ -1,7 +1,7 @@
 # PauseOverlay.gd
 extends Control
 
-@onready var label := $Background/Label
+@onready var label := $Background/CenterContainer/Label
 
 func _ready() -> void:
 	hide()

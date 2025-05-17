@@ -10,10 +10,10 @@ var player: Node3D
 @export var height: float = 2.5
 
 # Adjust camera interactions
-@export var sensitivity: float = 0.005
-@export var zoom_speed: float = 1.0
+@export var sensitivity: float = 0.002
+@export var zoom_speed: float = 10.0
 @export var min_pitch: float = deg_to_rad(0)
-@export var max_pitch: float = deg_to_rad(60)
+@export var max_pitch: float = deg_to_rad(80)
 @export var rot_speed: float = 10.0
 @export var follow_speed: float = 10.0
 
@@ -22,9 +22,6 @@ var yaw: float = 0.0
 
 # current x-axis angle
 var pitch: float = 0.0
-
-# track mouse button state
-var rotating: bool = false
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -59,15 +56,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if PauseManager.is_paused():
 		return
 	
-	# Check for mouse button press
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT:
-			rotating = event.pressed
-	
-	# Update the current angles only if the mouse button is pressed
-	if rotating and event is InputEventMouseMotion:
+	# Update the current angles without mouse button check
+	if event is InputEventMouseMotion:
 		yaw -= event.relative.x * sensitivity
-		pitch = clamp(pitch - event.relative.y * sensitivity, min_pitch, max_pitch)
+		pitch = clamp(pitch + event.relative.y * sensitivity, min_pitch, max_pitch)  # Invert pitch here
 	
 	# Zoom in or out
 	elif event is InputEventMouseButton and event.pressed:
