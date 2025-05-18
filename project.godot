@@ -74,3 +74,6 @@ look={
 
 renderer/rendering_method.mobile="forward_plus"
 renderer/rendering_method.web="forward_plus"
+reflections/reflection_atlas/reflection_size=512
+reflections/reflection_atlas/reflection_count=256
+reflections/size/mode=0

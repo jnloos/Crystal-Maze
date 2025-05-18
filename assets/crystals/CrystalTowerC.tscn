@@ -7,7 +7,6 @@ load_path = "res://.godot/imported/crystal_15_0.png-afde86accd47ac5c475c8970fea4
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nu2ft"]
 resource_name = "Material.004"
-transparency = 4
 vertex_color_use_as_albedo = true
 albedo_texture = SubResource("CompressedTexture2D_g5jfy")
 metallic = 1.0
