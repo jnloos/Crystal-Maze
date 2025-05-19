@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://c1d5ghf2kiddw" path="res://scripts/MazeGenerator.gd" id="1_k07xo"]
 [ext_resource type="PackedScene" uid="uid://c5rr88lnwjf81" path="res://assets/maze/walls/WallBanner.tscn" id="2_gm34k"]
 [ext_resource type="PackedScene" uid="uid://crrro3lc02e1k" path="res://assets/maze/walls/WallGrave.tscn" id="3_fn7yj"]
-[ext_resource type="PackedScene" uid="uid://c5dwceuohnkdi" path="res://assets/crystals/CrystalTransparent.tscn" id="4_xdyba"]
+[ext_resource type="PackedScene" uid="uid://c5dwceuohnkdi" path="res://assets/maze/walls/WallTransparent.tscn" id="4_xdyba"]
 [ext_resource type="PackedScene" uid="uid://cxtqg6kndgbgd" path="res://assets/maze/walls/WallCrystalB.tscn" id="5_b1ed2"]
 [ext_resource type="PackedScene" uid="uid://6vbccgu42gn1" path="res://assets/maze/paths/CrystalPathA.tscn" id="6_wx38t"]
 [ext_resource type="PackedScene" uid="uid://cfrab4gmjmkeb" path="res://assets/maze/paths/CrystalPathB.tscn" id="7_hjepx"]
