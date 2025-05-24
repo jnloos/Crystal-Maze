@@ -7,3 +7,6 @@ script = ExtResource("1_7nq4e")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 current = true
+
+[node name="CollisionRay" type="RayCast3D" parent="Camera3D"]
+target_position = Vector3(0, 0, -1)
