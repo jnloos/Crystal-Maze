@@ -24,19 +24,19 @@ class_name MazeGenerator
 func _ready() -> void:
 	randomize()
 	print("MazeGenerator starts.")
-	assert(wall_scenes.size() == wall_weights.size(), "Wall-Szenen und Gewichte müssen gleichlang sein")
-	assert(path_scenes.size() == path_weights.size(), "Path-Szenen und Gewichte müssen gleichlang sein")
+	assert(wall_scenes.size() == wall_weights.size(), "Wall scenes and weights must have equal length.")
+	assert(path_scenes.size() == path_weights.size(), "Path scenes and weights must have equal length.")
 	generate_maze()
 	print("MazeGenerator finished.")
 
 func generate_maze() -> void:
 	if not FileAccess.file_exists(map_file_path):
-		push_error("Map-File nicht gefunden: %s" % map_file_path)
+		push_error("Map-File not found: %s" % map_file_path)
 		return
 
 	var file: FileAccess = FileAccess.open(map_file_path, FileAccess.ModeFlags.READ)
 	if file == null:
-		push_error("Konnte Datei nicht öffnen: %s" % map_file_path)
+		push_error("Can not read file: %s" % map_file_path)
 		return
 
 	var lines: Array[String] = []
@@ -133,7 +133,7 @@ func _choose_weighted(scenes: Array[PackedScene], weights: Array[float]) -> Pack
 	for w in weights:
 		total += w
 	if total <= 0.0:
-		push_error("Summe der Gewichte muss > 0 sein")
+		push_error("Sum of weights must be > 0.")
 		return scenes[0]
 	var r := randf() * total
 	var acc := 0.0

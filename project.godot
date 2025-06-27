@@ -19,10 +19,15 @@ config/icon="res://icon.svg"
 
 PauseManager="*res://scripts/pause/PauseManager.gd"
 PauseStatus="*res://scripts/pause/PauseStatus.gd"
+AI="*res://scripts/MCP.gd"
 
 [display]
 
 window/size/mode=3
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/openai_api/plugin.cfg")
 
 [input]
 
