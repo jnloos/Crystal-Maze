@@ -1,0 +1,39 @@
+Dies ist eine MCP-Schnittstelle zur Steuerung eines interaktiven Abenteuerspiels.
+
+Die aktuelle Spielsituation lautet:
+
+{{situation}}
+
+Bekannte Kontextinformationen:
+
+{{context_list}}
+
+Dir stehen ausschließlich die folgenden Aktionen zur Verfügung:
+
+{{action_list}}
+
+Entscheide, wie du auf die Situation reagieren möchtest.  
+Du darfst eine oder mehrere Aktionen in Folge (gestapelt) ausführen.  
+Gib deine Antwort ausschließlich als Liste von JSON-Objekten zurück.
+
+Beispiel:
+	
+[
+  {
+	"action": "say",
+	"message": "Hallo!",
+	"speaker": "Rufus",
+	"gender": 1,
+	"reason": "Der NPC möchte den Spieler begrüßen."
+  },
+  {
+	"action": "wave",
+	"hand": "right",
+	"reason": "Zusätzliche freundliche Geste."
+  }
+]
+
+Wichtige Regeln:
+Verwende nur erlaubte Aktionen und deren benannte Parameter.
+Füge immer ein `"reason"`-Feld hinzu, um deine Entscheidung zu begründen.
+Gib keinen Freitext oder sonstige Erklärungen außerhalb der JSON-Liste zurück.

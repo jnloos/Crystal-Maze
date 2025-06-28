@@ -1,0 +1,8 @@
+Der Spieler hat gerade Folgendes gerufen oder gesagt:
+
+„{{message}}“
+
+Aus dem Kontext kannst du entnehmen, welche NPCs die Nachricht gehört haben. Ebenso findest du dort Informationen über die NPCs. 
+
+Entscheide, welcher NPC antwortet und was er antwortet, um die Unterhaltung glaubwürdig fortzusetzen.  
+Du kannst auch mehrere Antworten nacheinander generieren, wenn es sinnvoll ist.

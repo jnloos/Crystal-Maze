@@ -51,7 +51,15 @@ func _http_request_completed(result, response_code, headers, body):
 	var message = Message.new()
 	
 	##TODO: Add error handeling in case of bad response
-	message.set_role(response["choices"][0]["message"]["role"])
-	message.set_content(response["choices"][0]["message"]["content"])
-	parent.emit_signal("gpt_response_completed",message,response)
+	if not response.has("choices") or response["choices"].size() == 0:
+		push_error("GPT response invalid or empty:\n" + JSON.stringify(response, "\t"))
+		return
 
+	var choice = response["choices"][0]
+	var content = choice.get("message", {}).get("content", "")
+	var role = choice.get("message", {}).get("role", "")
+
+	message.set_role(role)
+	message.set_content(content)
+
+	parent.emit_signal("gpt_response_completed",message,response)

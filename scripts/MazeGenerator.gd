@@ -1,4 +1,3 @@
-# File: res://scripts/MazeGenerator.gd
 extends Node3D
 class_name MazeGenerator
 

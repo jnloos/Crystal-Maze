@@ -1,15 +1,20 @@
-extends Node3D
+extends BaseNPC
 
 @export var detection_message: String = "Player nearby!"
 @export var exit_message: String = "Player left the area."
 @export var idle_animation: String = "CharacterArmature|Idle_Neutral"
 @export var wave_animation: String = "CharacterArmature|Wave"
 
+var possible_names := [
+	"Bernadette", "Günther", "Alina", "Otto", "Selma",
+	"Rufus", "Elisa", "Dieter", "Lina", "Hugo"
+]
+
 func _ready() -> void:
-	var area = $Area3D
-	area.body_entered.connect(_on_body_entered)
-	area.body_exited.connect(_on_body_exited)
+	npc_name = possible_names[randi() % possible_names.size()]
+	init_npc()
 	play_animation(idle_animation)
+	add_to_group("npc")
 
 func play_animation(animation_name: String) -> void:
 	var animation_player = $Adventurer/AnimationPlayer
@@ -23,18 +28,9 @@ func play_animation(animation_name: String) -> void:
 	animation_player.play(animation_name)
 	
 	if animation_name == wave_animation:
-		# Überprüfen, ob das Signal bereits verbunden ist
 		if not animation_player.is_connected("animation_finished", Callable(self, "_on_wave_finished")):
 			animation_player.animation_finished.connect(Callable(self, "_on_wave_finished"))
 
 func _on_wave_finished(anim_name: String) -> void:
 	if anim_name == wave_animation:
-		play_animation(idle_animation)
-
-func _on_body_entered(body: Node) -> void:
-	if body.is_in_group("player"):
-		play_animation(wave_animation)
-
-func _on_body_exited(body: Node) -> void:
-	if body.is_in_group("player"):
 		play_animation(idle_animation)

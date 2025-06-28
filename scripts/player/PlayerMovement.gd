@@ -10,6 +10,10 @@ func _ready() -> void:
 	add_to_group("player")
 
 func _physics_process(delta: float) -> void:
+	# Block movement when UI component is focused.
+	if get_viewport().gui_get_focus_owner() != null:
+		return
+		
 	# Do not move, if the game is paused. 
 	if PauseManager.is_paused():
 		velocity = Vector3.ZERO
