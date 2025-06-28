@@ -2,8 +2,8 @@ Der Spieler hat gerade Folgendes gerufen oder gesagt:
 
 „{{message}}“
 
-Aus dem Kontext kannst du entnehmen, welche NPCs die Nachricht gehört haben. Ebenso findest du dort Informationen über die NPCs. 
+Entscheide, welcher NPC antwortet und was er antwortet, um die Unterhaltung fortzusetzen.
+Führe zusätzlich zu den Antworten Animationen aus, um die Unterhaltung natürlich wirken zu lassen.
 
-Entscheide, welcher NPC antwortet und was er antwortet, um die Unterhaltung glaubwürdig fortzusetzen.  
-Du kannst auch mehrere Antworten nacheinander generieren, wenn es sinnvoll ist.
-Achte darauf, dass du zusätzlich angemessene Animationen für den NPC startest. 
+Aus dem Kontext kannst du entnehmen, welche NPCs die Nachricht gehört haben. 
+Ebenso findest du dort Informationen über die NPCs und eine Unterhaltungshistorie. 

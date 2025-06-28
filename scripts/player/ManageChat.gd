@@ -7,20 +7,23 @@ class_name ManageChat
 @onready var messages_box := $VBoxContainer/Messages
 @onready var template_label := messages_box.get_node("Template")
 
-var listeners: Array[BaseNPC] = []
-var max_messages: int = 5
+var max_messages: int = 6
+var visible_messages: Array[String] = []
+var full_history: Array[String] = []
 
 func _ready():
-	var handler = Handler.new("say", Callable(self, "handle_say")) \
-		.add_desc("Arbitrtary NPC sends message to chat") \
+	Reference.interaction_area.listeners_updated.connect(__update_listener_label)
+	__update_listener_label()
+
+	var handler = Handler.new("talk", Callable(self, "ai_message")) \
+		.add_desc("Ein NPC spricht mit dem Spieler. Verwende 'npc_id', um den NPC-Sprecher eindeutig zu identifizieren.") \
 		.add_param("message", "string") \
-		.add_param("speaker", "string") \
-		.add_param("gender", "int")
+		.add_param("npc_id", "string")
 	MCP.add_global_handler(handler)
-	print("Registrierte Handler:", MCP._global_handlers.keys())
 
 	send_button.pressed.connect(_on_send_pressed)
 	__speak_text("Finde den Schatz! Er muss im Labyrinth versteckt sein!", 0)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
@@ -40,79 +43,71 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _on_send_pressed():
-	print("Registrierte Handler when button pressed:", MCP._global_handlers.keys())
 	var text = input_field.text.strip_edges()
 
 	__speak_text(text, 0)
 	input_field.text = ""
-	add_message("Du: " + text, Color.CORNFLOWER_BLUE)
+	add_message("Spieler: " + text, Color.CORNFLOWER_BLUE, "player")
+
+	var listeners = Reference.interaction_area.get_listeners()
+	__update_listener_label()
 
 	if text == "" or listeners.is_empty():
 		return
 
-	# Prompt vorbereiten
 	var prompt := Prompt.new("response").add_param("message", text)
 	var builder = AI.create_mcp(prompt)
 
-	# Kontext: Spielertext
-	builder.add_context(Context.new("input_text", text))
-
-	# Kontext: alle aktiven NPCs
-	var player_controller := Reference.player
 	for npc in listeners:
-		var dist := npc.dist_to(player_controller)
-		var anim := npc.get_current_animation_name()
-
-		var npc_context := Context.new(npc.npc_id, {
-			"id": npc.npc_id,
-			"name": npc.npc_name,
-			"gender": npc.npc_gender,
-			"description": npc.npc_description,
-			"distance_to_player": snapped(dist, 0.1),
-			"current_animation": anim
-		})
-		builder.add_context(npc_context)
+		builder.add_context(npc.to_context())
 		npc.register_ai_handlers(builder)
 
-	# Anfrage an AI senden
 	builder.process_input()
 
-func add_message(msg: String, color: Color):
-	if messages_box.get_child_count() >= max_messages:
-		for child in messages_box.get_children():
-			if child != template_label:
-				child.queue_free()
-				break
+func __update_listener_label():
+	var listeners = Reference.interaction_area.get_listeners()
+	if listeners.is_empty():
+		listener_label.text = "Zuhörer: niemand"
+	else:
+		var names = listeners.map(func(n): return n.npc_name)
+		listener_label.text = "Zuhörer: " + ", ".join(names)
+
+func add_message(display_text: String, color: Color, sender_id: String):
 	var label = template_label.duplicate()
 	label.visible = true
-	label.text = msg
+	label.text = display_text
 	label.add_theme_color_override("font_color", color)
 	messages_box.add_child(label)
 
-func handle_say(message: String, speaker: String, gender: int):
-	add_message("%s: %s" % [speaker, message], Color.WHITE)
-	__speak_text(message, gender)
+	visible_messages.append(display_text)
 
-func register_listener(npc: BaseNPC) -> void:
-	if npc not in listeners:
-		listeners.append(npc)
-		npc.focus_player()
-		__update_listener_label()
+	var labels := messages_box.get_children()
+	var message_labels := labels.filter(func(n): return n != template_label)
 
-func unregister_listener(npc: BaseNPC) -> void:
-	if npc in listeners:
-		npc.defocus_player()
-		listeners.erase(npc)
-		__update_listener_label()
+	while message_labels.size() > max_messages:
+		var oldest = message_labels[0]
+		oldest.queue_free()
+		message_labels.remove_at(0)
 
-func __update_listener_label():
-	if listeners.size() == 0:
-		listener_label.text = "Zuhörer: niemand"
-	else:
-		var names = []
-		for npc in listeners:
-			names.append(npc.npc_name)
-		listener_label.text = "Zuhörer: " + ", ".join(names)
+	visible_messages = visible_messages.slice(-max_messages)
+	
+	var history_entry = "%s: %s" % [sender_id, display_text.split(": ", false)[1]]
+	full_history.append(history_entry)
+	MCP.add_global_context(Context.new("conversation", full_history.duplicate()))
+
+func ai_message(message: String, npc_id: String):
+	var npc = _resolve_npc_by_id(npc_id)
+	if npc == null:
+		push_warning("Ungültiger NPC: %s" % npc_id)
+		return
+	add_message("%s: %s" % [npc.npc_name, message], Color.WHITE, npc_id)
+	__speak_text(message, npc.npc_gender)
+
+func _resolve_npc_by_id(npc_id: String) -> BaseNPC:
+	for npc in Reference.interaction_area.get_listeners():
+		if npc.npc_id == npc_id:
+			return npc
+	return null
 
 func __speak_text(text: String, gender: int = 1):
 	var voice = DisplayServer.tts_get_voices_for_language("en")[gender % 2]

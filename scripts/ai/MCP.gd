@@ -34,13 +34,9 @@ func add_handler(handler: Handler) -> MCP:
 	return self
 
 static func add_global_context(ctx: Context) -> void:
-	if _global_contexts.has(ctx.key):
-		return
 	_global_contexts[ctx.key] = ctx
 
 func add_context(ctx: Context) -> MCP:
-	if context.has(ctx.key):
-		return self
 	context[ctx.key] = ctx
 	return self
 
@@ -135,6 +131,13 @@ func interpret_response(message: Message, response: Dictionary):
 
 		var action: String = entry["action"]
 		var reason: String = entry.get("reason", "")
+
+		# Merge parameters from nested object if necessary
+		if entry.has("parameters") and typeof(entry["parameters"]) == TYPE_DICTIONARY:
+			for key in entry["parameters"].keys():
+				# Don't overwrite existing top-level fields
+				if not entry.has(key):
+					entry[key] = entry["parameters"][key]
 
 		var handler_callable = handlers.get(action, _global_handlers.get(action, null))
 		if handler_callable and handler_callable.is_valid():
