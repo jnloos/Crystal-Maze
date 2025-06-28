@@ -6,8 +6,7 @@ extends BaseNPC
 @export var wave_animation: String = "CharacterArmature|Wave"
 
 var possible_names := [
-	"Bernadette", "Günther", "Alina", "Otto", "Selma",
-	"Rufus", "Elisa", "Dieter", "Lina", "Hugo"
+	"Bernadette", "Marge", "Alina", "Selma", "Viktoria"
 ]
 
 func _ready() -> void:

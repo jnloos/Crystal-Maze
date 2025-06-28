@@ -1,4 +1,5 @@
-Dies ist eine MCP-Schnittstelle zur Steuerung eines interaktiven Abenteuerspiels.
+Dies ist eine MCP-Schnittstelle zur Steuerung eines interaktiven Labyrinth Spiels.
+Der Spieler hat das Ziel einen Schatz zu finden.
 
 Die aktuelle Spielsituation lautet:
 
@@ -13,7 +14,8 @@ Dir stehen ausschließlich die folgenden Aktionen zur Verfügung:
 {{action_list}}
 
 Entscheide, wie du auf die Situation reagieren möchtest.  
-Du darfst eine oder mehrere Aktionen in Folge (gestapelt) ausführen.  
+Du darfst eine oder mehrere Aktionen in Folge (gestapelt) ausführen. 
+Du darfst aber keine der Aktionen doppelt ausführen. 
 Gib deine Antwort ausschließlich als Liste von JSON-Objekten zurück.
 
 Beispiel:

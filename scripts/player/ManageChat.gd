@@ -17,6 +17,7 @@ func _ready():
 		.add_param("speaker", "string") \
 		.add_param("gender", "int")
 	MCP.add_global_handler(handler)
+	print("Registrierte Handler:", MCP._global_handlers.keys())
 
 	send_button.pressed.connect(_on_send_pressed)
 	__speak_text("Finde den Schatz! Er muss im Labyrinth versteckt sein!", 0)
@@ -39,6 +40,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _on_send_pressed():
+	print("Registrierte Handler when button pressed:", MCP._global_handlers.keys())
 	var text = input_field.text.strip_edges()
 	__speak_text(text, 0)
 
@@ -65,25 +67,25 @@ func _on_send_pressed():
 			"distance_to_player": snapped(dist, 0.1)
 		})
 		builder.add_context(npc_context)
-
+		
 	# Anfrage an AI senden
-	builder.process_input(Callable(self, "on_ai_response"))
+	builder.process_input()
 
 func add_message(msg: String, color: Color):
 	if messages_box.get_child_count() >= max_messages:
-		messages_box.get_child(0).queue_free()
+		for child in messages_box.get_children():
+			if child != template_label:
+				child.queue_free()
+				break
 	var label = template_label.duplicate()
 	label.visible = true
 	label.text = msg
 	label.add_theme_color_override("font_color", color)
 	messages_box.add_child(label)
 
-func handle_say(data: Dictionary):
-	var npc_name: String = data.get("speaker", "NPC")
-	var text: String = data.get("message", "[leere Nachricht]")
-	var voice: int = data.get("gender", 1)
-	add_message("%s: %s" % [npc_name, text], Color.DARK_ORANGE)
-	__speak_text(text, voice)
+func handle_say(message: String, speaker: String, gender: int):
+	add_message("%s: %s" % [speaker, message], Color.WHITE)
+	__speak_text(message, gender)
 
 func register_listener(npc: BaseNPC) -> void:
 	if npc not in listeners:
@@ -113,29 +115,8 @@ func _toggle_chat_focus():
 	var focus_owner = get_viewport().gui_get_focus_owner()
 	if focus_owner == input_field:
 		input_field.release_focus()
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		input_field.grab_focus()
-		
-func on_ai_response(content: String) -> void:
-	print("GPT antwortet mit:\n", content)
-
-	var result := JSON.new()
-	if result.parse(content) != OK:
-		push_warning("Antwort konnte nicht als JSON geparst werden.")
-		add_message("[Fehlerhafte GPT-Antwort]", Color.WHITE)
-		return
-
-	var data = result.data
-	if typeof(data) != TYPE_ARRAY:
-		push_warning("GPT-Antwort war kein Array.")
-		add_message("[Unerwartetes Antwortformat]", Color.RED)
-		return
-
-	for item in data:
-		if typeof(item) != TYPE_DICTIONARY:
-			continue
-		var action: String = item.get("action", "")
-		if action == "say":
-			handle_say(item)
-		else:
-			push_warning("Unbekannte Aktion ignoriert: %s" % action)
+		input_field.caret_column = input_field.text.length()
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

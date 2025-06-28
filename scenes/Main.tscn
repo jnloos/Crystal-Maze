@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://h330013map1l" path="res://assets/maze/paths/MirrorPath.tscn" id="14_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://dpuh6g6ax3gd4" path="res://assets/maze/paths/ScaffoldPath.tscn" id="15_gsxep"]
 [ext_resource type="PackedScene" uid="uid://bhbivsfcv2mda" path="res://assets/maze/paths/StonePathA.tscn" id="16_v0vrg"]
-[ext_resource type="PackedScene" uid="uid://c3ltfp0i5xvth" path="res://assets/maze/paths/AdventurerPath.tscn" id="17_bb450"]
+[ext_resource type="PackedScene" uid="uid://c3ltfp0i5xvth" path="res://assets/maze/npcs/AdventurerPath.tscn" id="17_bb450"]
 [ext_resource type="PackedScene" uid="uid://de5yb7vghprmc" path="res://assets/maze/paths/StonePathB.tscn" id="17_dg70y"]
 [ext_resource type="Texture2D" uid="uid://b2ekqci47bfje" path="res://assets/hdr/NightSkyHDRI004_8K-HDR.exr" id="18_bb450"]
 

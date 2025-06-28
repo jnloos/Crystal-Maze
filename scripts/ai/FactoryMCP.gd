@@ -5,15 +5,19 @@ class_name Intelligence
 
 func create_mcp(prompt: Prompt) -> MCP:
 	var mcp := MCP.new(prompt)
-	mcp.openai = openai
-
+	
 	var key := load_api_key()
 	openai.set_api(key)
+	mcp.openai = openai
 
-	if not openai.is_connected("gpt_response_completed", Callable(mcp, "interpret_response")):
-		openai.connect("gpt_response_completed", Callable(mcp, "interpret_response"))
+	var handler = Handler.new("test", Callable(self, "test_log")) \
+		.add_desc("Execute a test response and log it into the console.")
+	MCP.add_global_handler(handler)
 
 	return mcp
+
+func test_log():
+	print("OpenAI responed properly and the test was succesful.")
 
 func load_api_key() -> String:
 	var file := FileAccess.open("res://auth.txt", FileAccess.READ)
@@ -22,5 +26,5 @@ func load_api_key() -> String:
 		file.close()
 		return key
 	else:
-		push_warning("⚠️ Could not open auth.txt for OpenAi API key.")
+		push_warning("Could not open auth.txt for OpenAi API key.")
 		return ""

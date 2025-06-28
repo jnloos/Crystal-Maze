@@ -9,6 +9,20 @@ extends CharacterBody3D
 func _ready() -> void:
 	add_to_group("player")
 
+	var dir_ctx = Context.new("target_direction", Callable(self, "target_direction"))
+	MCP.add_global_context(dir_ctx)
+
+	var dist_ctx = Context.new("target_distance", Callable(self, "target_distance"))
+	MCP.add_global_context(dist_ctx)
+
+func target_distance():
+	var maze = get_node("/root/Maze")
+	return maze.get_distance_to_target(global_position)
+
+func target_direction():
+	var maze = get_node("/root/Maze")
+	return maze.get_direction_to_target(global_position)
+
 func _physics_process(delta: float) -> void:
 	# Block movement when UI component is focused.
 	if get_viewport().gui_get_focus_owner() != null:

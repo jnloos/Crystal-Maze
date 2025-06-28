@@ -16,9 +16,17 @@ class_name MazeGenerator
 @export var wall_scenes: Array[PackedScene] = []
 @export var wall_weights: Array[float] = []
 
+# NPCs + ihre Gewichte
+@export var npc_scenes: Array[PackedScene] = []
+@export var npc_weights: Array[float] = []
+var npc_list: Array[Node3D] = []
+
 # Paths + ihre Gewichte (für spezielle Pfade)
 @export var path_scenes: Array[PackedScene] = []
 @export var path_weights: Array[float] = []
+
+# Store target position
+var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	randomize()
@@ -54,30 +62,31 @@ func generate_maze() -> void:
 				"#":
 					instance = _choose_weighted(wall_scenes, wall_weights).instantiate() as Node3D
 				" ":
-					# Nur in einfachen Zellen Variationen erlauben
 					if _is_simple_cell(lines, row, col):
-						# Szene- und Gewichtelisten kopieren und base_path anhängen
 						var scenes := path_scenes.duplicate()
 						var weights := path_weights.duplicate()
 						scenes.append(base_path_scene)
 						weights.append(base_path_weight)
 						instance = _choose_weighted(scenes, weights).instantiate() as Node3D
 					else:
-						# Kreuzung oder Ecke → immer BasePath
 						instance = base_path_scene.instantiate() as Node3D
 					_orient_corridor(instance, lines, row, col)
 				"S":
 					instance = start_scene.instantiate() as Node3D
 				"T":
 					instance = target_scene.instantiate() as Node3D
+					target_position = Vector3(col * tile_size.x, 0, row * tile_size.z)
+				"N":
+					instance = _choose_weighted(npc_scenes, npc_weights).instantiate() as Node3D
+					npc_list.append(instance)
+					_orient_corridor(instance, lines, row, col)
 				_:
 					pass
-
+	
 			if instance:
 				total_instances += 1
 				instance.position = Vector3(col * tile_size.x, 0, row * tile_size.z)
 				add_child(instance)
-
 	print(lines.size(), "x" , lines[0].length(), " Felder, ", total_instances, " Instanzen")
 
 func _is_simple_cell(lines: Array[String], row: int, col: int) -> bool:
@@ -99,7 +108,7 @@ func _is_simple_cell(lines: Array[String], row: int, col: int) -> bool:
 	return false
 
 func _orient_corridor(instance: Node3D, lines: Array[String], row: int, col: int) -> void:
-	var dirs := [Vector2(0,-1), Vector2(0,1), Vector2(-1,0), Vector2(1,0)]
+	var dirs := [Vector2(0, -1), Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0)]
 	var open_dirs := []
 	for d in dirs:
 		var r := row + int(d.y)
@@ -108,23 +117,26 @@ func _orient_corridor(instance: Node3D, lines: Array[String], row: int, col: int
 			open_dirs.append(d)
 
 	var target_rot := 0.0
+
 	if open_dirs.size() == 1:
+		# Sackgasse – rotiere so, dass offene Seite zeigt nach vorne
 		match open_dirs[0]:
-			Vector2(0,-1): target_rot = 0
-			Vector2(0, 1): target_rot = PI
-			Vector2(-1,0): target_rot = -PI/2
-			Vector2(1, 0): target_rot = PI/2
+			Vector2(0, -1): target_rot = 0
+			Vector2(0, 1):  target_rot = PI
+			Vector2(-1, 0): target_rot = -PI / 2
+			Vector2(1, 0):  target_rot = PI / 2
+
 	elif open_dirs.size() == 2:
-		# Durchgang
+		# Durchgang – horizontale oder vertikale Strecke
 		if open_dirs[0].x == 0 and open_dirs[1].x == 0:
-			target_rot = 0
-		else:
-			target_rot = PI/2
+			target_rot = 0  # Nord-Süd
+		elif open_dirs[0].y == 0 and open_dirs[1].y == 0:
+			target_rot = PI / 2  # Ost-West
 
-	# zufällig 180° Variation
-	if randf() < 0.5:
-		target_rot += PI
-
+		# zufällige 180°-Drehung nur für Durchgänge
+		if randf() < 0.5:
+			target_rot += PI
+			
 	instance.rotation.y = target_rot
 
 func _choose_weighted(scenes: Array[PackedScene], weights: Array[float]) -> PackedScene:
@@ -141,3 +153,19 @@ func _choose_weighted(scenes: Array[PackedScene], weights: Array[float]) -> Pack
 		if r < acc:
 			return scenes[i]
 	return scenes[scenes.size() - 1]
+
+func get_direction_to_target(from_position: Vector3) -> String:
+	var delta := target_position - from_position
+	var angle := atan2(delta.x, delta.z)  # -Z ist Norden
+
+	var directions := [
+		"Nord", "Nordost", "Ost", "Südost",
+		"Süd", "Südwest", "West", "Nordwest"
+	]
+	var index := int(round(angle / (PI / 4))) % 8
+	if index < 0:
+		index += 8
+	return directions[index]
+
+func get_distance_to_target(from_position: Vector3) -> float:
+	return from_position.distance_to(target_position)
