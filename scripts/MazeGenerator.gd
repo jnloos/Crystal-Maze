@@ -29,6 +29,7 @@ var npc_list: Array[Node3D] = []
 var target_position: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
+	Reference.maze = self
 	randomize()
 	print("MazeGenerator starts.")
 	assert(wall_scenes.size() == wall_weights.size(), "Wall scenes and weights must have equal length.")

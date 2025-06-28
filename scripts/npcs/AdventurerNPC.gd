@@ -1,35 +1,76 @@
 extends BaseNPC
 
-@export var detection_message: String = "Player nearby!"
-@export var exit_message: String = "Player left the area."
-@export var idle_animation: String = "CharacterArmature|Idle_Neutral"
-@export var wave_animation: String = "CharacterArmature|Wave"
-
 var possible_names := [
 	"Bernadette", "Marge", "Alina", "Selma", "Viktoria"
 ]
 
-func _ready() -> void:
+var trail_queue: Array[Vector3] = []
+var trail_delay: float = 0.2
+var follow_speed: float = 4.0
+var _trail_timer: float = 0.0
+var is_following: bool = false
+var min_distance: float = 2.5
+
+func _sub_ready() -> void:
 	npc_name = possible_names[randi() % possible_names.size()]
-	init_npc()
-	play_animation(idle_animation)
-	add_to_group("npc")
+	npc_gender = 1
+	play_animation(idle_animation, Mode.IDLE)
 
-func play_animation(animation_name: String) -> void:
-	var animation_player = $Adventurer/AnimationPlayer
-	
-	if not animation_player.has_animation(animation_name):
-		push_error("Animation not found: " + animation_name)
+func _sub_process(delta: float) -> void:
+	if not is_following or Reference.player == null:
+		velocity = Vector3.ZERO
 		return
-	
-	animation_player.stop()
-	animation_player.seek(0, true)
-	animation_player.play(animation_name)
-	
-	if animation_name == wave_animation:
-		if not animation_player.is_connected("animation_finished", Callable(self, "_on_wave_finished")):
-			animation_player.animation_finished.connect(Callable(self, "_on_wave_finished"))
 
-func _on_wave_finished(anim_name: String) -> void:
-	if anim_name == wave_animation:
-		play_animation(idle_animation)
+	var player_pos := Reference.player.global_position
+	var distance := global_position.distance_to(player_pos)
+
+	if distance <= min_distance:
+		velocity = Vector3.ZERO
+		if _current_mode != Mode.IDLE:
+			play_idle()
+		move_and_slide()
+		return
+
+	if _current_mode != Mode.RUN:
+		play_run()
+
+	_trail_timer += delta
+	if _trail_timer >= trail_delay:
+		_trail_timer = 0.0
+		trail_queue.append(player_pos)
+
+	if trail_queue.size() > 0:
+		var target_pos := trail_queue[0]
+		var direction := target_pos - global_position
+		if direction.length() > 0.1:
+			direction = direction.normalized()
+			velocity = direction * follow_speed
+			look_at(global_position + direction, Vector3.UP)
+		else:
+			trail_queue.pop_front()
+	else:
+		velocity = Vector3.ZERO
+	move_and_slide()
+
+func follow_player() -> void:
+	if Reference.player == null:
+		push_warning("Kein Spieler verfügbar zum Folgen.")
+		return
+	trail_queue.clear()
+	_trail_timer = 0.0
+	is_following = true
+
+func unfollow_player() -> void:
+	is_following = false
+	trail_queue.clear()
+	clear_animation_mode()
+	play_idle()
+
+func _sub_register_ai_handlers(mcp: MCP) -> void:
+	var suffix := ":" + npc_id
+
+	mcp.add_handler(Handler.new("follow" + suffix, Callable(self, "follow_player")) \
+		.add_desc("NPC mit ID '%s' beginnt, dem Spieler zu folgen." % npc_id))
+
+	mcp.add_handler(Handler.new("unfollow" + suffix, Callable(self, "unfollow_player")) \
+		.add_desc("NPC mit ID '%s' hört auf, dem Spieler zu folgen." % npc_id))

@@ -6,3 +6,4 @@ Aus dem Kontext kannst du entnehmen, welche NPCs die Nachricht gehört haben. Eb
 
 Entscheide, welcher NPC antwortet und was er antwortet, um die Unterhaltung glaubwürdig fortzusetzen.  
 Du kannst auch mehrere Antworten nacheinander generieren, wenn es sinnvoll ist.
+Achte darauf, dass du zusätzlich angemessene Animationen für den NPC startest. 

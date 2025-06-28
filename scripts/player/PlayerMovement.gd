@@ -7,6 +7,7 @@ extends CharacterBody3D
 @onready var anim_player: AnimationPlayer = $HeroAsset/AnimationPlayer
 
 func _ready() -> void:
+	Reference.player = self
 	add_to_group("player")
 
 	var dir_ctx = Context.new("target_direction", Callable(self, "target_direction"))

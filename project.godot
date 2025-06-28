@@ -24,6 +24,7 @@ general/text_to_speech=true
 PauseManager="*res://scripts/pause/PauseManager.gd"
 PauseStatus="*res://scripts/pause/PauseStatus.gd"
 AI="*res://ai/Intelligence.tscn"
+Reference="*res://scripts/References.gd"
 
 [editor_plugins]
 

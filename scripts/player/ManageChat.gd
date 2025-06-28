@@ -12,7 +12,7 @@ var max_messages: int = 5
 
 func _ready():
 	var handler = Handler.new("say", Callable(self, "handle_say")) \
-		.add_desc("NPC sends message to chat") \
+		.add_desc("Arbitrtary NPC sends message to chat") \
 		.add_param("message", "string") \
 		.add_param("speaker", "string") \
 		.add_param("gender", "int")
@@ -42,12 +42,13 @@ func _input(event: InputEvent) -> void:
 func _on_send_pressed():
 	print("Registrierte Handler when button pressed:", MCP._global_handlers.keys())
 	var text = input_field.text.strip_edges()
+
 	__speak_text(text, 0)
+	input_field.text = ""
+	add_message("Du: " + text, Color.CORNFLOWER_BLUE)
 
 	if text == "" or listeners.is_empty():
 		return
-	input_field.text = ""
-	add_message("Du: " + text, Color.CORNFLOWER_BLUE)
 
 	# Prompt vorbereiten
 	var prompt := Prompt.new("response").add_param("message", text)
@@ -57,17 +58,22 @@ func _on_send_pressed():
 	builder.add_context(Context.new("input_text", text))
 
 	# Kontext: alle aktiven NPCs
-	var player_controller := get_parent()
+	var player_controller := Reference.player
 	for npc in listeners:
 		var dist := npc.dist_to(player_controller)
-		var npc_context := Context.new("npc_" + npc.npc_name, {
-			"speaker": npc.npc_name,
+		var anim := npc.get_current_animation_name()
+
+		var npc_context := Context.new(npc.npc_id, {
+			"id": npc.npc_id,
+			"name": npc.npc_name,
 			"gender": npc.npc_gender,
 			"description": npc.npc_description,
-			"distance_to_player": snapped(dist, 0.1)
+			"distance_to_player": snapped(dist, 0.1),
+			"current_animation": anim
 		})
 		builder.add_context(npc_context)
-		
+		npc.register_ai_handlers(builder)
+
 	# Anfrage an AI senden
 	builder.process_input()
 
@@ -90,10 +96,12 @@ func handle_say(message: String, speaker: String, gender: int):
 func register_listener(npc: BaseNPC) -> void:
 	if npc not in listeners:
 		listeners.append(npc)
+		npc.focus_player()
 		__update_listener_label()
 
 func unregister_listener(npc: BaseNPC) -> void:
 	if npc in listeners:
+		npc.defocus_player()
 		listeners.erase(npc)
 		__update_listener_label()
 
