@@ -20,24 +20,6 @@ Dieser Kontext ist bekannt:
 
 {{context_list}}
 
-Ein Beispiel:
-	
-[
-  {
-	"action": "talk",
-	"parameters": {
-	  "message": "Hallo!",
-	  "npc_id": "npc_5"
-	},
-	"reason": "Der NPC möchte den Spieler begrüßen."
-  },
-  {
-	"action": "wave:npc_5",
-	"parameters": {},
-	"reason": "Zusätzliche freundliche Geste."
-  }
-]
-
 Über die Formatierung:
 Verwende nur erlaubte Aktionen und deren benannte Parameter.
 Gib deine Antwort ausschließlich als Liste von JSON-Objekten zurück.

@@ -25,17 +25,23 @@ var npc_list: Array[Node3D] = []
 @export var path_scenes: Array[PackedScene] = []
 @export var path_weights: Array[float] = []
 
-# Store target position
+# Store target position and map
 var target_position: Vector3 = Vector3.ZERO
+var raw_map: Array[String] = []
 
 func _ready() -> void:
 	Reference.maze = self
 	randomize()
+	
 	print("MazeGenerator starts.")
-	assert(wall_scenes.size() == wall_weights.size(), "Wall scenes and weights must have equal length.")
-	assert(path_scenes.size() == path_weights.size(), "Path scenes and weights must have equal length.")
+	assert(wall_scenes.size() == wall_weights.size())
+	assert(path_scenes.size() == path_weights.size())
 	generate_maze()
 	print("MazeGenerator finished.")
+
+	MCP.add_global_context(Context.new("maze_map", Callable(self, "create_map")))
+	MCP.add_global_context(Context.new("player_position", Callable(self, "get_player_coords")))
+	MCP.add_global_context(Context.new("target_position", Callable(self, "get_target_coords")))
 
 func generate_maze() -> void:
 	if not FileAccess.file_exists(map_file_path):
@@ -51,6 +57,7 @@ func generate_maze() -> void:
 	while not file.eof_reached():
 		lines.append(file.get_line())
 	file.close()
+	raw_map = lines.duplicate()
 
 	var total_instances := 0
 	for row in range(lines.size()):
@@ -170,3 +177,39 @@ func get_direction_to_target(from_position: Vector3) -> String:
 
 func get_distance_to_target(from_position: Vector3) -> float:
 	return from_position.distance_to(target_position)
+
+func create_map() -> String:
+	var player_pos = Reference.player.global_position
+	
+	var map_lines := raw_map.duplicate()
+	var px := int(round(player_pos.x / tile_size.x))
+	var py := int(round(player_pos.z / tile_size.z))
+	var tx := int(round(target_position.x / tile_size.x))
+	var ty := int(round(target_position.z / tile_size.z))
+
+	for row in range(map_lines.size()):
+		var line = map_lines[row]
+		var line_chars = line.split("")
+		for col in range(line_chars.size()):
+			match line_chars[col]:
+				"N": line_chars[col] = " "
+		if row == py:
+			line_chars[px] = "S"
+		if row == ty:
+			line_chars[tx] = "T"
+		map_lines[row] = "".join(line_chars)
+	
+	return "\n".join(map_lines)
+
+func get_player_coords() -> Vector2i:
+	var pos = Reference.player.global_position
+	return Vector2i(
+		int(round(pos.x / tile_size.x)),
+		int(round(pos.z / tile_size.z))
+	)
+
+func get_target_coords() -> Vector2i:
+	return Vector2i(
+		int(round(target_position.x / tile_size.x)),
+		int(round(target_position.z / tile_size.z))
+	)

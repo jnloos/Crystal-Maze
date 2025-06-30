@@ -12,18 +12,11 @@ var visible_messages: Array[String] = []
 var full_history: Array[String] = []
 
 func _ready():
+	Reference.chat = self
 	Reference.interaction_area.listeners_updated.connect(__update_listener_label)
 	__update_listener_label()
-
-	var handler = Handler.new("talk", Callable(self, "ai_message")) \
-		.add_desc("Ein NPC spricht mit dem Spieler. Verwende 'npc_id', um den NPC-Sprecher eindeutig zu identifizieren.") \
-		.add_param("message", "string") \
-		.add_param("npc_id", "string")
-	MCP.add_global_handler(handler)
-
 	send_button.pressed.connect(_on_send_pressed)
 	__speak_text("Finde den Schatz! Er muss im Labyrinth versteckt sein!", 0)
-
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
@@ -44,10 +37,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_send_pressed():
 	var text = input_field.text.strip_edges()
-
-	__speak_text(text, 0)
 	input_field.text = ""
-	add_message("Spieler: " + text, Color.CORNFLOWER_BLUE, "player")
 
 	var listeners = Reference.interaction_area.get_listeners()
 	__update_listener_label()
@@ -55,11 +45,14 @@ func _on_send_pressed():
 	if text == "" or listeners.is_empty():
 		return
 
+	__speak_text(text, 0)
+	add_message("Spieler: " + text, Color.CORNFLOWER_BLUE, "player")
+
 	var prompt := Prompt.new("response").add_param("message", text)
 	var builder = AI.create_mcp(prompt)
 
 	for npc in listeners:
-		builder.add_context(npc.to_context())
+		builder.add_context(npc.context())
 		npc.register_ai_handlers(builder)
 
 	builder.process_input()

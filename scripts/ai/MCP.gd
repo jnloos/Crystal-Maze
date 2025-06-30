@@ -13,9 +13,9 @@ var context: Dictionary = {}
 var prompt: Prompt = null
 var wrapper: Prompt = null
 var openai: Node = null 
-var model: String = "gpt-3.5-turbo"
+var model: String = "gpt-4.1"
 
-func _init(p: Prompt = null, model_name: String = "gpt-3.5-turbo") -> void:
+func _init(p: Prompt = null, model_name: String = "gpt-4.1") -> void:
 	wrapper = Prompt.new("wrapper")
 	prompt = p
 	model = model_name
@@ -80,11 +80,8 @@ func process_input() -> MCP:
 			"description": desc
 		})
 		
-	# Prepare context
-	var context_lines := []
-	for key in ctx_dict.keys():
-		context_lines.append("- %s: %s" % [key, str(ctx_dict[key])])
-	var context_list := "\n".join(context_lines)
+	# Prepare context as JSON
+	var context_list := JSON.stringify(ctx_dict, "\t")
 
 	# Prepare prompt
 	wrapper.add_params({
@@ -102,7 +99,7 @@ func process_input() -> MCP:
 
 	# Send request and fetch response
 	openai.gpt_response_completed.connect(self.interpret_response)
-	openai.prompt_gpt(messages, "gpt-3.5-turbo")
+	openai.prompt_gpt(messages, model)
 	return self
 	
 func interpret_response(message: Message, response: Dictionary):

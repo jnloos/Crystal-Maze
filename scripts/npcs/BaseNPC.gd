@@ -7,19 +7,20 @@ static var __npc_instance_counter: int = 0
 @export var npc_name: String = ""
 @export var npc_gender: int = 0
 @export var npc_description: String = ""
+@export var npc_mood: String = "neutral"
 
 @onready var anim_player: AnimationPlayer = $ControllerNpc/AnimationPlayer
 
 # Animation-Namen
-@export var idle_animation: String = "CharacterArmature|Idle"
-@export var walk_animation: String = "CharacterArmature|Walk"
-@export var run_animation: String = "CharacterArmature|Run"
-@export var fight_animation: String = "CharacterArmature|Sword_Slash"
-@export var wave_animation: String = "CharacterArmature|Wave"
-@export var interact_animation: String = "CharacterArmature|Interact"
+@export var idle_animation: String = "Idle"
+@export var walk_animation: String = "Walking_B"
+@export var run_animation: String = "Running_B"
+@export var fight_animation: String = "1H_Melee_Attack_Chop"
+@export var cheer_animation: String = "Cheer"
+@export var interact_animation: String = "Interact"
 
 # Animation-Modi
-enum Mode { NONE, IDLE, WALK, RUN, FIGHT, WAVE, INTERACT }
+enum Mode { NONE, IDLE, WALK, RUN, FIGHT, CHEER, INTERACT }
 var _current_mode: int = Mode.NONE
 var _locked_mode: int = Mode.NONE
 
@@ -97,17 +98,23 @@ func play_fight() -> void:
 	play_animation(fight_animation, Mode.FIGHT)
 	_locked_mode = Mode.FIGHT
 
-func play_wave() -> void:
-	play_animation(wave_animation, Mode.WAVE)
-	_locked_mode = Mode.WAVE
+func play_cheer() -> void:
+	play_animation(cheer_animation, Mode.CHEER)
+	_locked_mode = Mode.CHEER
 
 func play_interact() -> void:
 	play_animation(interact_animation, Mode.INTERACT)
 	_locked_mode = Mode.INTERACT
+	
+func set_mood(mood: String) -> void: 
+	npc_mood = mood
+	
+func talk(message: String) -> void:
+	Reference.chat.ai_message(message, npc_id)
 
 func _on_animation_finished(anim_name: String) -> void:
 	match _locked_mode:
-		Mode.FIGHT, Mode.WAVE, Mode.INTERACT:
+		Mode.FIGHT, Mode.CHEER, Mode.INTERACT:
 			_locked_mode = Mode.NONE
 
 func clear_animation_mode() -> void:
@@ -120,7 +127,7 @@ func get_current_animation_name() -> String:
 		Mode.WALK: return "Walk"
 		Mode.RUN: return "Run"
 		Mode.FIGHT: return "Fight"
-		Mode.WAVE: return "Wave"
+		Mode.CHEER: return "Cheer"
 		Mode.INTERACT: return "Interact"
 		_: return "None"
 
@@ -138,23 +145,41 @@ func register_ai_handlers(mcp: MCP) -> void:
 	mcp.add_handler(Handler.new("fight" + suffix, Callable(self, "play_fight")) \
 		.add_desc("Spiele Kampf-Animation für NPC mit ID '%s'" % npc_id))
 
-	mcp.add_handler(Handler.new("wave" + suffix, Callable(self, "play_wave")) \
-		.add_desc("Spiele Winken-Animation für NPC mit ID '%s'" % npc_id))
+	mcp.add_handler(Handler.new("cheer" + suffix, Callable(self, "play_wave")) \
+		.add_desc("Spiele Jubeln-Animation für NPC mit ID '%s'" % npc_id))
 
 	mcp.add_handler(Handler.new("interact" + suffix, Callable(self, "play_interact")) \
 		.add_desc("Spiele Interaktionsanimation für NPC mit ID '%s'" % npc_id))
+		
+	# Other available ai functions
+	mcp.add_handler(Handler.new("talk:" + npc_id, Callable(self, "talk")) \
+		.add_desc("NPC '%s' spricht mit dem Spieler." % npc_id) \
+		.add_param("message", "string"))
+		
+	mcp.add_handler(Handler.new("set_mood" + suffix, Callable(self, "set_mood")) \
+		.add_desc("Ändere die Stimmung des NPC mit ID '%s'" % npc_id) \
+		.add_param("mood", "string"))
 
 	_sub_register_ai_handlers(mcp)
 
-func to_context() -> Context:
-	return Context.new(npc_id, {
+func context() -> Context:
+	var base_data: Dictionary = {
 		"id": npc_id,
 		"name": npc_name,
 		"gender": npc_gender,
 		"description": npc_description,
+		"mood": npc_mood,
 		"distance_to_player": snapped(dist_to(Reference.player), 0.1),
 		"current_animation": get_current_animation_name()
-	})
+	}
+	
+	# Erweiterung aus Subklasse holen
+	var extra_data: Dictionary = _sub_context()
+	for key in extra_data.keys():
+		base_data[key] = extra_data[key]
+
+	return Context.new(npc_id, base_data)
+
 
 # Override in subclasses
 func _sub_register_ai_handlers(mcp: MCP) -> void:
@@ -167,3 +192,6 @@ func _sub_ready() -> void:
 # Override in subclasses
 func _sub_process(_delta: float) -> void:
 	pass
+
+func _sub_context() -> Dictionary:
+	return {}

@@ -28,7 +28,7 @@ func _on_body_exited(body: Node) -> void:
 			body.defocus_player()
 			listeners.erase(body)
 			emit_signal("listeners_updated")
-			_send_exit_prompt(body)
+			# _send_exit_prompt(body)
 
 func _send_enter_prompt(npc: BaseNPC) -> void:
 	var prompt := Prompt.new("enter_area") \
@@ -36,7 +36,7 @@ func _send_enter_prompt(npc: BaseNPC) -> void:
 		.add_param("id", npc.npc_id)
 	var mcp := AI.create_mcp(prompt)
 
-	mcp.add_context(npc.to_context())
+	mcp.add_context(npc.context())
 	npc.register_ai_handlers(mcp)
 
 	mcp.process_input()
@@ -47,7 +47,7 @@ func _send_exit_prompt(npc: BaseNPC) -> void:
 		.add_param("id", npc.npc_id)
 	var mcp := AI.create_mcp(prompt)
 
-	mcp.add_context(npc.to_context())
+	mcp.add_context(npc.context())
 	npc.register_ai_handlers(mcp)
 
 	mcp.process_input()

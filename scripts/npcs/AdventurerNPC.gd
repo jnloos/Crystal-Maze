@@ -1,15 +1,18 @@
 extends BaseNPC
 
 var possible_names := [
-	"Bernadette", "Marge", "Alina", "Selma", "Viktoria"
+	"Arwen", "Eowyn", "Galadriel", "Luthien", "Idril", "Melian", "Yavanna", "Elwing"
 ]
 
 var trail_queue: Array[Vector3] = []
 var trail_delay: float = 0.1
-var follow_speed: float = 4.0
 var _trail_timer: float = 0.0
 var is_following: bool = false
 var min_distance: float = 2.5
+
+@export var walk_speed: float = 2.0
+@export var run_speed: float = 6.0
+var is_running := false
 
 func _sub_ready() -> void:
 	npc_name = possible_names[randi() % possible_names.size()]
@@ -32,27 +35,35 @@ func _sub_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# Position in Trail einreihen
 	_trail_timer += delta
 	if _trail_timer >= trail_delay:
 		_trail_timer = 0.0
-		trail_queue.append(player_pos)
+		if trail_queue.size() == 0 or trail_queue[-1].distance_to(player_pos) > 0.5:
+			trail_queue.append(player_pos)
 
-	# Bewegung zum nächsten Zielpunkt
 	if trail_queue.size() > 0:
 		var target_pos := trail_queue[0]
 		var direction := target_pos - global_position
 
 		if direction.length() > 0.05:
 			var new_dir := direction.normalized()
+
+			if distance > 6.0 and not is_running:
+				is_running = true
+				if _locked_mode == Mode.NONE and _current_mode != Mode.RUN:
+					play_run()
+			elif distance < 5.0 and is_running:
+				is_running = false
+				if _locked_mode == Mode.NONE and _current_mode != Mode.WALK:
+					play_walk()
+
+			var follow_speed = run_speed if is_running else walk_speed
 			velocity = new_dir * follow_speed
 
 			if velocity.length() > 0.1:
-				look_at(global_position + new_dir, Vector3.UP)
-
-			# Nur wenn keine priorisierte Animation aktiv ist
-			if _locked_mode == Mode.NONE and _current_mode != Mode.RUN:
-				play_run()
+				var target_rot_y = atan2(-velocity.x, -velocity.z)
+				var current_rot_y = rotation.y
+				rotation.y = lerp_angle(current_rot_y, target_rot_y, delta * 5.0)
 		else:
 			trail_queue.pop_front()
 			velocity = Vector3.ZERO
@@ -83,3 +94,8 @@ func _sub_register_ai_handlers(mcp: MCP) -> void:
 
 	mcp.add_handler(Handler.new("unfollow" + suffix, Callable(self, "unfollow_player")) \
 		.add_desc("NPC mit ID '%s' hört damit auf, den Spieler zu verfolgen und bleibt stehen." % npc_id))
+
+func _sub_context() -> Dictionary:
+	return {
+		"is_following_player": is_following
+	}
