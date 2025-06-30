@@ -4,25 +4,24 @@ class_name BaseNPC
 var npc_id: String = ""
 static var __npc_instance_counter: int = 0
 
-@export var npc_name: String = ""
-@export var npc_gender: int = 0
-@export var npc_description: String = ""
-@export var npc_mood: String = "neutral"
+var npc_name: String = ""
+var npc_gender: int = 0
+var npc_description: String = ""
+var npc_mood: String = "neutral"
 
 @onready var anim_player: AnimationPlayer = $ControllerNpc/AnimationPlayer
 
 # Animation-Namen
-@export var idle_animation: String = "Idle"
-@export var walk_animation: String = "Walking_B"
-@export var run_animation: String = "Running_B"
-@export var fight_animation: String = "1H_Melee_Attack_Chop"
-@export var cheer_animation: String = "Cheer"
-@export var interact_animation: String = "Interact"
+var idle_animation: String = "Idle"
+var walk_animation: String = "Walking_B"
+var run_animation: String = "Running_B"
+var fight_animation: String = "1H_Melee_Attack_Chop"
+var cheer_animation: String = "Cheer"
+var interact_animation: String = "Interact"
 
-# Animation-Modi
-enum Mode { NONE, IDLE, WALK, RUN, FIGHT, CHEER, INTERACT }
-var _current_mode: int = Mode.NONE
-var _locked_mode: int = Mode.NONE
+# Animationsstatus
+var _current_mode: String = "locked"
+var _locked_mode: String = "locked"
 
 # Fokus auf Spieler
 var player: Node3D = null
@@ -39,18 +38,18 @@ func _process(_delta: float) -> void:
 	if focus_enabled and Reference.player:
 		_face_player_y_only()
 
-	if _locked_mode != Mode.NONE:
+	if _locked_mode != "locked":
 		_sub_process(_delta)
 		return
 		
 	if velocity.length() > 0.01:
 		if velocity.length() < 3.0:
-			if _current_mode != Mode.WALK:
+			if _current_mode != "walk":
 				play_walk()
 		else:
-			if _current_mode != Mode.RUN:
+			if _current_mode != "run":
 				play_run()
-	elif _current_mode == Mode.NONE or not anim_player.is_playing():
+	elif _current_mode == "locked" or not anim_player.is_playing():
 		play_idle()
 
 	_sub_process(_delta)
@@ -77,34 +76,36 @@ func defocus_player() -> void:
 	focus_enabled = false
 
 # Animationen
-func play_animation(anim_name: String, mode: int) -> void:
+func play_animation(anim_name: String, mode: String) -> void:
 	if not anim_player.has_animation(anim_name):
 		push_warning("NPC '%s': Animation '%s' nicht gefunden." % [npc_name, anim_name])
 		return
-	if anim_player.current_animation != anim_name:
-		anim_player.play(anim_name)
+	if anim_player.current_animation == anim_name and anim_player.is_playing():
+		# Animation läuft bereits – nichts tun
+		return
+	anim_player.play(anim_name)
 	_current_mode = mode
 
 func play_idle() -> void:
-	play_animation(idle_animation, Mode.IDLE)
+	play_animation(idle_animation, "idle")
 
 func play_walk() -> void:
-	play_animation(walk_animation, Mode.WALK)
+	play_animation(walk_animation, "walk")
 
 func play_run() -> void:
-	play_animation(run_animation, Mode.RUN)
+	play_animation(run_animation, "run")
 
 func play_fight() -> void:
-	play_animation(fight_animation, Mode.FIGHT)
-	_locked_mode = Mode.FIGHT
+	play_animation(fight_animation, "fight")
+	_locked_mode = "fight"
 
 func play_cheer() -> void:
-	play_animation(cheer_animation, Mode.CHEER)
-	_locked_mode = Mode.CHEER
+	play_animation(cheer_animation, "cheer")
+	_locked_mode = "cheer"
 
 func play_interact() -> void:
-	play_animation(interact_animation, Mode.INTERACT)
-	_locked_mode = Mode.INTERACT
+	play_animation(interact_animation, "interact")
+	_locked_mode = "interact"
 	
 func set_mood(mood: String) -> void: 
 	npc_mood = mood
@@ -114,22 +115,12 @@ func talk(message: String) -> void:
 
 func _on_animation_finished(anim_name: String) -> void:
 	match _locked_mode:
-		Mode.FIGHT, Mode.CHEER, Mode.INTERACT:
-			_locked_mode = Mode.NONE
+		"fight", "cheer", "interact":
+			_locked_mode = "locked"
 
 func clear_animation_mode() -> void:
-	_current_mode = Mode.NONE
-	_locked_mode = Mode.NONE
-
-func get_current_animation_name() -> String:
-	match _current_mode:
-		Mode.IDLE: return "Idle"
-		Mode.WALK: return "Walk"
-		Mode.RUN: return "Run"
-		Mode.FIGHT: return "Fight"
-		Mode.CHEER: return "Cheer"
-		Mode.INTERACT: return "Interact"
-		_: return "None"
+	_current_mode = "locked"
+	_locked_mode = "locked"
 
 func register_ai_handlers(mcp: MCP) -> void:
 	if mcp == null:
@@ -169,8 +160,7 @@ func context() -> Context:
 		"gender": npc_gender,
 		"description": npc_description,
 		"mood": npc_mood,
-		"distance_to_player": snapped(dist_to(Reference.player), 0.1),
-		"current_animation": get_current_animation_name()
+		"distance_to_player": snapped(dist_to(Reference.player), 0.1)
 	}
 	
 	# Erweiterung aus Subklasse holen
@@ -180,16 +170,13 @@ func context() -> Context:
 
 	return Context.new(npc_id, base_data)
 
-
 # Override in subclasses
 func _sub_register_ai_handlers(mcp: MCP) -> void:
 	pass
 
-# Override in subclasses
 func _sub_ready() -> void:
 	pass
 
-# Override in subclasses
 func _sub_process(_delta: float) -> void:
 	pass
 

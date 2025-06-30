@@ -22,5 +22,5 @@ shape = SubResource("CapsuleShape3D_yox3t")
 script = ExtResource("3_tc7vg")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
-transform = Transform3D(30, 0, 0, 0, 5, 0, 0, 0, 30, 0, 1.6, 0)
+transform = Transform3D(20, 0, 0, 0, 5, 0, 0, 0, 20, 0, 1.6, 0)
 shape = SubResource("SphereShape3D_tc7vg")

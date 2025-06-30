@@ -60,6 +60,8 @@ func generate_maze() -> void:
 	raw_map = lines.duplicate()
 
 	var total_instances := 0
+	var simple_path_cells = []
+	
 	for row in range(lines.size()):
 		var line := lines[row]
 		for col in range(line.length()):
@@ -76,6 +78,7 @@ func generate_maze() -> void:
 						scenes.append(base_path_scene)
 						weights.append(base_path_weight)
 						instance = _choose_weighted(scenes, weights).instantiate() as Node3D
+						simple_path_cells.append(instance)
 					else:
 						instance = base_path_scene.instantiate() as Node3D
 					_orient_corridor(instance, lines, row, col)
@@ -84,10 +87,6 @@ func generate_maze() -> void:
 				"T":
 					instance = target_scene.instantiate() as Node3D
 					target_position = Vector3(col * tile_size.x, 0, row * tile_size.z)
-				"N":
-					instance = _choose_weighted(npc_scenes, npc_weights).instantiate() as Node3D
-					npc_list.append(instance)
-					_orient_corridor(instance, lines, row, col)
 				_:
 					pass
 	
@@ -95,6 +94,25 @@ func generate_maze() -> void:
 				total_instances += 1
 				instance.position = Vector3(col * tile_size.x, 0, row * tile_size.z)
 				add_child(instance)
+				
+	if npc_scenes.size() > simple_path_cells.size():
+		push_warning("Nicht genug einfache Zellen für alle NPCs – einige werden nicht platziert.")
+	simple_path_cells.shuffle()
+
+	for i in range(npc_scenes.size()):
+		var npc = npc_scenes[i].instantiate() as Node3D
+		var old_node: Node3D = simple_path_cells[i]
+		
+		# Alte Node entfernen
+		remove_child(old_node)
+		old_node.queue_free()
+
+		# NPC an dieselbe Stelle setzen
+		npc.position = old_node.position
+		npc.rotation = old_node.rotation
+		add_child(npc)
+		npc_list.append(npc)
+
 	print(lines.size(), "x" , lines[0].length(), " Felder, ", total_instances, " Instanzen")
 
 func _is_simple_cell(lines: Array[String], row: int, col: int) -> bool:
