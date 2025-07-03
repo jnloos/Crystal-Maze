@@ -18,7 +18,6 @@ class_name MazeGenerator
 
 # NPCs + ihre Gewichte
 @export var npc_scenes: Array[PackedScene] = []
-@export var npc_weights: Array[float] = []
 var npc_list: Array[Node3D] = []
 
 # Paths + ihre Gewichte (für spezielle Pfade)
@@ -182,7 +181,7 @@ func _choose_weighted(scenes: Array[PackedScene], weights: Array[float]) -> Pack
 
 func get_direction_to_target(from_position: Vector3) -> String:
 	var delta := target_position - from_position
-	var angle := atan2(delta.x, delta.z)  # -Z ist Norden
+	var angle := atan2(-delta.x, delta.z)
 
 	var directions := [
 		"Nord", "Nordost", "Ost", "Südost",

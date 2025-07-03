@@ -1,94 +1,92 @@
-extends BaseNPC
+extends SmartNPC
 
 var possible_names := ["Knochenbert", "Ribby", "Schädelchen"]
 
 var is_dead := true
 var is_resurrecting := false
-var auto_die_timeout := 30.0  # Sekunden bis automatischer Tod
 
-@export var sleep_animation: String = "Death_C_Skeletons"
-@export var resurrect_animation: String = "Death_C_Skeletons_Resurrect"
-@export var pose_animation: String = "Death_C_Pose"
+@export var death_anim: String = "Death_A"
+@export var dead_pose_anim: String = "Death_A_Pose"
 
-@onready var pivot: Node3D = $Pivot
-var _auto_die_timer: float = 0.0
+@onready var pivot: Node3D = get_parent().get_node_or_null("Pivot")
 
-func _sub_ready() -> void:
+func _ready() -> void:
+	super._ready()
+
 	npc_name = possible_names[randi() % possible_names.size()]
 	npc_gender = 0
 	npc_description = Prompt.new("skeleton").to_str()
 
-	is_dead = true
-	is_resurrecting = false
-	focus_enabled = false
-	_auto_die_timer = 0.0
+	if is_dead:
+		_focus_on_pivot()
+		play_animation_permanent(dead_pose_anim)
+	else:
+		focus_player()
+		play_idle_permanent()
 
-	_turn_towards_pivot()
-	play_animation(sleep_animation, "locked")
-
-func _sub_process(delta: float) -> void:
+func _process(delta: float) -> void:
+	super._process(delta)
 	velocity = Vector3.ZERO
-
-	# automatisches Sterben nach Timeout
-	if not is_dead and not is_resurrecting:
-		_auto_die_timer += delta
-		if _auto_die_timer >= auto_die_timeout:
-			die()
-
+	
 func die() -> void:
 	if is_dead or is_resurrecting:
 		return
 
-	_turn_towards_pivot()
-
 	is_dead = true
 	is_resurrecting = false
-	focus_enabled = false
-	_auto_die_timer = 0.0
 
-	play_animation(sleep_animation, "locked")
+	_focus_on_pivot()
+
+	super.queue_animation(death_anim, 10.0, 1.0)
+	play_animation_permanent(dead_pose_anim)
+	
+	await get_tree().create_timer(1.5).timeout
 
 func resurrect() -> void:
 	if not is_dead or is_resurrecting:
 		return
 
-	_turn_towards_pivot()
-
 	is_dead = false
 	is_resurrecting = true
-	focus_enabled = true
-	_auto_die_timer = 0.0
 
-	play_animation(resurrect_animation, "locked")
+	_focus_on_pivot()
+
+	super.queue_animation(death_anim, 10.0, -1.0)
+	play_idle_permanent()
+	
+	await get_tree().create_timer(1.5).timeout
+	focus_player()
+	
+	is_resurrecting = false
 
 func play_pose() -> void:
-	play_animation(pose_animation, "idle")
+	play_animation_permanent(dead_pose_anim)
 
-func _turn_towards_pivot() -> void:
-	if not is_instance_valid(pivot):
-		return
-	var direction := global_position.direction_to(pivot.global_position)
-	direction.y = 0
-	if direction.length() > 0.01:
-		look_at(global_position + direction, Vector3.UP)
+func _focus_on_pivot() -> void:
+	if is_instance_valid(pivot):
+		focus(pivot)
+	else:
+		defocus()
 
-func _on_animation_finished(anim_name: String) -> void:
-	if anim_name == resurrect_animation and is_resurrecting:
-		is_resurrecting = false
-		clear_animation_mode()
+func queue_animation(anim_name: String, priority: float = 1.0, speed_override: float = 1.0) -> void:
+	if is_dead and not is_resurrecting:
+		resurrect()
+	super.queue_animation(anim_name, priority, speed_override)
 
 func _sub_register_ai_handlers(mcp: MCP) -> void:
 	var suffix := ":" + npc_id
 
-	mcp.add_handler(Handler.new("die" + suffix, Callable(self, "die")) \
+	mcp.add_handler(Handler.new("die" + suffix, Callable(self, "die"))
 		.add_desc("Skelett '%s' legt sich ins Grab." % npc_id))
 
-	mcp.add_handler(Handler.new("resurrect" + suffix, Callable(self, "resurrect")) \
+	mcp.add_handler(Handler.new("resurrect" + suffix, Callable(self, "resurrect"))
 		.add_desc("Skelett '%s' steht wieder auf." % npc_id))
+
+	mcp.add_handler(Handler.new("pose" + suffix, Callable(self, "play_pose"))
+		.add_desc("Skelett '%s' posiert." % npc_id))
 
 func _sub_context() -> Dictionary:
 	return {
 		"is_dead": is_dead,
-		"is_resurrecting": is_resurrecting,
-		"auto_die_timer": snapped(_auto_die_timer, 0.1)
+		"is_resurrecting": is_resurrecting
 	}

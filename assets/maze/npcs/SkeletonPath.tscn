@@ -21,6 +21,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 0, -2.4)
 [node name="AdventurerNpc" parent="." instance=ExtResource("3_70bdh")]
 transform = Transform3D(-1.6, 0, -2.41593e-07, 0, 1.6, 0, 2.41593e-07, 0, -1.6, 1.51665, -1.39147, -0.610999)
 script = ExtResource("4_70bdh")
-sleep_animation = null
-resurrect_animation = null
-pose_animation = null
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)

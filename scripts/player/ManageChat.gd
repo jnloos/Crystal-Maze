@@ -96,7 +96,7 @@ func ai_message(message: String, npc_id: String):
 	add_message("%s: %s" % [npc.npc_name, message], Color.WHITE, npc_id)
 	__speak_text(message, npc.npc_gender)
 
-func _resolve_npc_by_id(npc_id: String) -> BaseNPC:
+func _resolve_npc_by_id(npc_id: String) -> SmartNPC:
 	for npc in Reference.interaction_area.get_listeners():
 		if npc.npc_id == npc_id:
 			return npc

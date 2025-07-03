@@ -12,6 +12,3 @@ shape = SubResource("CapsuleShape3D_absod")
 
 [node name="ControllerNpc" parent="." instance=ExtResource("2_rutv7")]
 transform = Transform3D(-0.8, 0, -6.99382e-08, 0, 0.8, 0, 6.99382e-08, 0, -0.8, 0, 0, 0)
-
-[node name="Pivot" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)

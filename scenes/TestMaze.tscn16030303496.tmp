@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://cg2iip2m5p6ak"]
+[gd_scene load_steps=21 format=3 uid="uid://cg2iip2m5p6ak"]
 
 [ext_resource type="Texture2D" uid="uid://b2ekqci47bfje" path="res://assets/hdr/NightSkyHDRI004_8K-HDR.exr" id="1_cjal3"]
 [ext_resource type="Script" uid="uid://c1d5ghf2kiddw" path="res://scripts/MazeGenerator.gd" id="1_k07xo"]
@@ -17,7 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://bhbivsfcv2mda" path="res://assets/maze/paths/StonePathA.tscn" id="13_popug"]
 [ext_resource type="PackedScene" uid="uid://de5yb7vghprmc" path="res://assets/maze/paths/StonePathB.tscn" id="14_uu7u5"]
 [ext_resource type="PackedScene" uid="uid://h330013map1l" path="res://assets/maze/paths/MirrorPath.tscn" id="15_aqwt5"]
-[ext_resource type="PackedScene" uid="uid://c3ltfp0i5xvth" path="res://assets/maze/npcs/AdventurerPath.tscn" id="16_pd3ak"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nfivy"]
 panorama = ExtResource("1_cjal3")
@@ -47,7 +46,7 @@ map_file_path = "res://maps/test.txt"
 base_path_weight = 4.0
 wall_scenes = Array[PackedScene]([ExtResource("2_gm34k"), ExtResource("3_fn7yj"), ExtResource("4_xdyba"), ExtResource("5_b1ed2")])
 wall_weights = Array[float]([3.0, 3.0, 3.0, 1.0])
-npc_scenes = Array[PackedScene]([ExtResource("6_pd3ak"), ExtResource("16_pd3ak")])
+npc_scenes = Array[PackedScene]([ExtResource("6_pd3ak")])
 path_scenes = Array[PackedScene]([ExtResource("6_wx38t"), ExtResource("7_hjepx"), ExtResource("8_wwdnn"), ExtResource("9_7trey"), ExtResource("10_3ycfk"), ExtResource("11_22g2n"), ExtResource("12_u06j6"), ExtResource("13_popug"), ExtResource("14_uu7u5"), ExtResource("15_aqwt5")])
 path_weights = Array[float]([2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 4.0, 4.0, 0.5])
 

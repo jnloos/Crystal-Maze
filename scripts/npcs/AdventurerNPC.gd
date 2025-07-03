@@ -1,4 +1,4 @@
-extends BaseNPC
+extends SmartNPC
 
 var possible_names := [
 	"Arwen", "Eowyn", "Galadriel", "Luthien", "Idril", "Melian", "Yavanna", "Elwing"
@@ -6,42 +6,39 @@ var possible_names := [
 
 var is_following: bool = false
 var min_distance: float = 2.5
-var _current_movement_state := "idle"
 
 @export var walk_speed: float = 2.0
 @export var run_speed: float = 6.0
 
-# Schrittbewegung
 var _step_timer := 0.0
-var _step_duration := 2.0
+var _step_duration := 4.0
 var _step_velocity: Vector3 = Vector3.ZERO
 
-func _sub_ready() -> void:
+func _ready() -> void:
+	super._ready()
 	npc_name = possible_names[randi() % possible_names.size()]
 	npc_gender = 1
 	npc_description = Prompt.new("adventurer").to_str()
 	play_idle_permanent()
 
-func _sub_process(delta: float) -> void:
+func _process(delta: float) -> void:
+	super._process(delta)
+
 	if _step_timer > 0.0:
 		_step_timer -= delta
-		if _step_velocity != Vector3.ZERO:
-			velocity = _step_velocity
-		else:
-			velocity = Vector3.ZERO
+		velocity = _step_velocity
 	else:
 		_step_timer = 0.0
 		_step_velocity = Vector3.ZERO
 
-		if not is_following or Reference.player == null:
+		var player := Reference.player
+		if not is_following or not is_instance_valid(player):
 			velocity = Vector3.ZERO
 		else:
-			var player_pos := Reference.player.global_position
-			var direction := player_pos - global_position
+			var direction := player.global_position - global_position
 			direction.y = 0
 
 			var distance := direction.length()
-
 			if distance <= min_distance:
 				velocity = Vector3.ZERO
 			else:
@@ -53,37 +50,33 @@ func _sub_process(delta: float) -> void:
 					var target_rot_y := atan2(-velocity.x, -velocity.z)
 					rotation.y = lerp_angle(rotation.y, target_rot_y, delta * 5.0)
 
-	if not _animation_locked:
-		var v_len := velocity.length()
-
-		if v_len < 0.1:
-			if _current_mode != idle_animation:
-				play_idle_permanent()
-		elif v_len < run_speed - 1.0:
-			if _current_mode != walk_animation:
-				play_walk()
-		else:
-			if _current_mode != run_animation:
-				play_run()
+	# Bewegung: passende Daueranimation setzen
+	var v_len := velocity.length()
+	if v_len < 0.1:
+		play_idle_permanent()
+	elif v_len < (walk_speed + run_speed) * 0.5:
+		play_walk_permanent()
+	else:
+		play_run_permanent()
 
 	move_and_slide()
 
 # Schrittmanöver
-func step_forward() -> void:
+func do_step(dir: Vector3) -> void:
 	_step_timer = _step_duration
-	_step_velocity = -transform.basis.z.normalized() * walk_speed
+	_step_velocity = dir.normalized() * walk_speed
+
+func step_forward() -> void:
+	do_step(-transform.basis.z)
 
 func step_back() -> void:
-	_step_timer = _step_duration
-	_step_velocity = transform.basis.z.normalized() * walk_speed
+	do_step(transform.basis.z)
 
 func step_left() -> void:
-	_step_timer = _step_duration
-	_step_velocity = -transform.basis.x.normalized() * walk_speed
+	do_step(-transform.basis.x)
 
 func step_right() -> void:
-	_step_timer = _step_duration
-	_step_velocity = transform.basis.x.normalized() * walk_speed
+	do_step(transform.basis.x)
 
 func follow_player() -> void:
 	if Reference.player == null:
@@ -96,8 +89,9 @@ func unfollow_player() -> void:
 	clear_animation_mode()
 	play_idle_permanent()
 
-func _sub_register_ai_handlers(mcp: MCP) -> void:
+func register_ai_handlers(mcp: MCP) -> void:
 	var suffix := ":" + npc_id
+	super.register_ai_handlers(mcp)
 
 	mcp.add_handler(Handler.new("follow" + suffix, Callable(self, "follow_player")) \
 		.add_desc("NPC mit ID '%s' beginnt, den Spieler durch das Labyrinth zu verfolgen." % npc_id))
@@ -117,7 +111,12 @@ func _sub_register_ai_handlers(mcp: MCP) -> void:
 	mcp.add_handler(Handler.new("step_right" + suffix, Callable(self, "step_right")) \
 		.add_desc("NPC '%s' geht kurz nach rechts." % npc_id))
 
-func _sub_context() -> Dictionary:
-	return {
-		"is_following_player": is_following
-	}
+func context() -> Context:
+	npc_data["is_following_player"] = is_following
+	return super.context()
+
+func on_player_approaching() -> void:
+	focus_player()
+
+func on_player_distancing() -> void:
+	defocus()
