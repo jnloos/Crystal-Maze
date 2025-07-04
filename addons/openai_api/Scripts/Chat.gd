@@ -7,6 +7,7 @@ var http_request: HTTPRequest
 
 func _ready():
 	http_request = HTTPRequest.new()
+	print(IP.resolve_hostname("api.openai.com", 443))
 	add_child(http_request)
 	http_request.request_completed.connect(self._http_request_completed)
 	

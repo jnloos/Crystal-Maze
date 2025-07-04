@@ -95,11 +95,20 @@ func _on_animation_finished(name: StringName) -> void:
 func play_idle_permanent() -> void:
 	play_animation_permanent(IDLE_ANIM)
 	
+func play_idle() -> void:
+	queue_animation(IDLE_ANIM)
+	
 func play_walk_permanent() -> void:
 	play_animation_permanent(WALK_ANIM)
 	
+func play_walk() -> void:
+	queue_animation(WALK_ANIM)
+	
 func play_run_permanent() -> void:
 	play_animation_permanent(RUN_ANIM)
+
+func play_run() -> void:
+	queue_animation(RUN_ANIM)
 
 func play_fight() -> void:
 	queue_animation(FIGHT_ANIM,    5.0)
