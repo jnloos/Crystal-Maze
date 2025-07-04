@@ -14,11 +14,10 @@ var min_distance: float = 2.5
 @export var run_speed: float = 6.0
 
 var _step_timer := 0.0
-var _step_duration := 0.6
+var _step_duration := 2.0
 var _step_velocity: Vector3 = Vector3.ZERO
 var _post_step_follow_timer: float = -1.0
 
-# Bewegungsstatus für Animation (idle, walk, run)
 var _movement_state: String = "idle"
 
 func _ready() -> void:
@@ -40,6 +39,8 @@ func _process(delta: float) -> void:
 				_step_timer = 0.0
 				movement_mode = MovementMode.NONE
 				_post_step_follow_timer = 4.0
+				if is_following:
+					focus_enabled = true  # Reaktiviert Rotation nach STEP
 			else:
 				v = _step_velocity
 
@@ -78,37 +79,50 @@ func _process(delta: float) -> void:
 					v = dir.normalized() * speed
 
 		MovementMode.NONE:
-			pass  # face_target() aus Basisklasse übernimmt Blickverhalten
+			pass
 
-	# Rückkehr zum FOLLOW-Modus nach Schritt
+	# Timer nach STEP: Rückkehr zu FOLLOW
 	if _post_step_follow_timer > 0.0:
 		_post_step_follow_timer -= delta
 		if _post_step_follow_timer <= 0.0 and is_following:
 			movement_mode = MovementMode.FOLLOW
 			_post_step_follow_timer = -1.0
 
-	# Bewegung setzen
 	velocity = v
 	move_and_slide()
 
-# Schrittmanöver
 func do_step(dir: Vector3) -> void:
 	movement_mode = MovementMode.STEP
 	_step_timer = _step_duration
 	_step_velocity = dir.normalized() * walk_speed
-	_post_step_follow_timer = -1.0  # Timer zurücksetzen
-
-func step_forward() -> void:
-	do_step(-transform.basis.z)
+	_post_step_follow_timer = -1.0
+	focus_enabled = false  # Deaktiviert Rotation während STEP
 
 func step_back() -> void:
-	do_step(transform.basis.z)
+	if is_instance_valid(Reference.player):
+		var dir = global_position - Reference.player.global_position
+		dir.y = 0
+		do_step(dir.normalized())
+
+func step_forward() -> void:
+	if is_instance_valid(Reference.player):
+		var dir = Reference.player.global_position - global_position
+		dir.y = 0
+		do_step(dir.normalized())
 
 func step_left() -> void:
-	do_step(-transform.basis.x)
+	if is_instance_valid(Reference.player):
+		var dir = global_position - Reference.player.global_position
+		dir.y = 0
+		var right = dir.cross(Vector3.UP).normalized()
+		do_step(-right)
 
 func step_right() -> void:
-	do_step(transform.basis.x)
+	if is_instance_valid(Reference.player):
+		var dir = global_position - Reference.player.global_position
+		dir.y = 0
+		var right = dir.cross(Vector3.UP).normalized()
+		do_step(right)
 
 func follow_player() -> void:
 	if Reference.player == null:
