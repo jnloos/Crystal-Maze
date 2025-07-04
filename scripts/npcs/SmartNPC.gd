@@ -90,7 +90,7 @@ func context() -> Context:
 	npc_data["description"] = npc_description
 	npc_data["mood"] = npc_mood
 	npc_data["distance_to_player"] = snapped(dist_to(Reference.player), 0.1)
-	return Context.new(npc_id, context)
+	return Context.new(npc_id, npc_data)
 
 # Override in subclasses if necessary
 func on_player_approaching() -> void:

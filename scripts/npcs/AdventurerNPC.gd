@@ -16,8 +16,9 @@ var min_distance: float = 2.5
 var _step_timer := 0.0
 var _step_duration := 0.6
 var _step_velocity: Vector3 = Vector3.ZERO
+var _post_step_follow_timer: float = -1.0
 
-# Neuer Bewegungsstatus für Animation (idle, walk, run)
+# Bewegungsstatus für Animation (idle, walk, run)
 var _movement_state: String = "idle"
 
 func _ready() -> void:
@@ -38,6 +39,7 @@ func _process(delta: float) -> void:
 			if _step_timer <= 0.0:
 				_step_timer = 0.0
 				movement_mode = MovementMode.NONE
+				_post_step_follow_timer = 4.0
 			else:
 				v = _step_velocity
 
@@ -50,7 +52,6 @@ func _process(delta: float) -> void:
 				dir.y = 0
 				var dist := dir.length()
 
-				# Hysterese-basierter Wechsel der Bewegung
 				match _movement_state:
 					"idle":
 						if dist > min_distance:
@@ -72,14 +73,19 @@ func _process(delta: float) -> void:
 						else:
 							play_run_permanent()
 
-				# Bewegung berechnen, falls über Abstand
 				if dist > min_distance:
 					var speed := run_speed if _movement_state == "run" else walk_speed
 					v = dir.normalized() * speed
 
-					if v.length() > 0.1:
-						var target_rot_y := atan2(-v.x, -v.z)
-						rotation.y = lerp_angle(rotation.y, target_rot_y, delta * 5.0)
+		MovementMode.NONE:
+			pass  # face_target() aus Basisklasse übernimmt Blickverhalten
+
+	# Rückkehr zum FOLLOW-Modus nach Schritt
+	if _post_step_follow_timer > 0.0:
+		_post_step_follow_timer -= delta
+		if _post_step_follow_timer <= 0.0 and is_following:
+			movement_mode = MovementMode.FOLLOW
+			_post_step_follow_timer = -1.0
 
 	# Bewegung setzen
 	velocity = v
@@ -90,6 +96,7 @@ func do_step(dir: Vector3) -> void:
 	movement_mode = MovementMode.STEP
 	_step_timer = _step_duration
 	_step_velocity = dir.normalized() * walk_speed
+	_post_step_follow_timer = -1.0  # Timer zurücksetzen
 
 func step_forward() -> void:
 	do_step(-transform.basis.z)
@@ -109,6 +116,7 @@ func follow_player() -> void:
 		return
 	is_following = true
 	movement_mode = MovementMode.FOLLOW
+	focus_player()
 
 func unfollow_player() -> void:
 	is_following = false
@@ -116,6 +124,7 @@ func unfollow_player() -> void:
 	clear_animation_mode()
 	play_idle_permanent()
 	_movement_state = "idle"
+	defocus()
 
 func register_ai_handlers(mcp: MCP) -> void:
 	var suffix := ":" + npc_id
@@ -148,4 +157,3 @@ func on_player_approaching() -> void:
 
 func on_player_distancing() -> void:
 	defocus()
-	
